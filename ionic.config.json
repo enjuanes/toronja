@@ -1,0 +1,7 @@
+{
+  "name": "toronja",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

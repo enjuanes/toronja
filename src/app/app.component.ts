@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +6,5 @@ import { getAnalytics } from 'firebase/analytics';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor() {
-
-  }
+  constructor() {}
 }

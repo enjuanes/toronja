@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "toronjos"
+  },
+  "targets": {
+    "toronjos": {
+      "hosting": {
+        "app": [
+          "toronja"
+        ]
+      }
+    }
   }
 }

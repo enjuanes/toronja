@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Toronja 🍊</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col *ngFor="let page of pages" size="12" sizeMd="6" sizeLg="4" sizeXl="3">
+        <ion-card [button]="true" [routerLink]="page.code">
+          <ion-item lines="full">
+            <ion-icon [name]="page.icon" slot="start"></ion-icon>
+            <ion-label>{{ page.title }}</ion-label>
+            <ion-button fill="clear" slot="end" color="toronja">
+              <ion-icon slot="icon-only" name="arrow-forward"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-card-content>{{ page.description }}</ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

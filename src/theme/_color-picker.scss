@@ -1,0 +1,17 @@
+.color-picker {
+  background-color: var(--ion-background-color) !important;
+  color: var(--ion-text-color) !important;
+  border-color: var(--ion-border-color) !important;
+
+  .box {
+    input {
+      background-color: var(--ion-toolbar-background);
+      border-color: var(--ion-border-color) !important;
+      color: var(--ion-text-color);
+    }
+
+    div {
+      color: var(--ion-text-color) !important;
+    }
+  }
+}

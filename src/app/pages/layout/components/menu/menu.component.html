@@ -1,0 +1,22 @@
+<ion-menu side="start" menuId="appMenu" contentId="main" type="push" [swipeGesture]="false">
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-title>Toronja 🍊</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list lines="full">
+      <ion-menu-toggle auto-hide="true">
+        <ng-container *ngFor="let page of pages">
+          <ion-item
+            [routerLink]="page.code"
+            [button]="true"
+          >
+            <ion-icon [name]="page.icon" slot="start"></ion-icon>
+            <ion-label>{{ page.title }}</ion-label>
+          </ion-item>
+        </ng-container>
+      </ion-menu-toggle>
+    </ion-list>
+  </ion-content>
+</ion-menu>

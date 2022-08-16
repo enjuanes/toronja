@@ -47,7 +47,7 @@ export class ColorPage implements OnInit, OnDestroy {
     this.document.querySelector('head > meta[name="theme-color"]').remove();
     const elementTheme = this.document.createElement('meta');
     elementTheme.setAttribute('name', 'theme-color');
-    elementTheme.setAttribute('content', color);
+    elementTheme.setAttribute('content', `#${color}`);
     this.document.querySelector('head').appendChild(elementTheme);
   }
 }

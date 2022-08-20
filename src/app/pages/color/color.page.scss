@@ -1,3 +1,19 @@
+ion-header {
+  ion-icon, ion-menu-button {
+    color: white
+  }
+
+  &.light {
+    ion-icon, ion-menu-button {
+      color: black
+    }
+  }
+
+  &::after {
+    display: none;
+  }
+}
+
 .no-cursor {
   cursor: none;
 }

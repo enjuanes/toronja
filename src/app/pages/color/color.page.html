@@ -1,5 +1,5 @@
-<ion-header *ngIf="layoutVisible">
-  <ion-toolbar>
+<ion-header *ngIf="layoutVisible" [ngClass]="{'light': isLight}">
+  <ion-toolbar [ngStyle]="{'--background': '#' + color}">
     <ion-buttons slot="start">
       <ion-menu-button [menu]="'appMenu'"></ion-menu-button>
     </ion-buttons>

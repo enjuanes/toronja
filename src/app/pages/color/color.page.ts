@@ -19,12 +19,11 @@ export class ColorPage implements OnInit, OnDestroy {
   colorPickerOpen = false;
   color = TORONJA_COLOR;
 
-  layoutVisible = false;
+  layoutVisible = true;
   isFullscreen = false;
 
   subscriptionUrlChange: Subscription;
   subjectHideLayout: Subject<any> = new Subject();
-
 
   constructor(
     private route: ActivatedRoute,

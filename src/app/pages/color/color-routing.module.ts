@@ -7,8 +7,7 @@ import { ColorPage } from './color.page';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: localStorage.getItem('favoriteColor') ? localStorage.getItem('favoriteColor') : TORONJA_COLOR,
-    pathMatch: 'full'
+    component: ColorPage
   },
   {
     path: ':color',

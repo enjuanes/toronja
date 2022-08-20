@@ -16,12 +16,12 @@ export class ColorPickerComponent implements OnInit, OnDestroy {
   colorChangedObservable: Subject<void> = new Subject<void>();
 
   constructor(private modalController: ModalController, private router: Router) {
-    this.colorChangedObservable.pipe(debounceTime(500)).subscribe(() => {
-      this.router.navigate(['color', this.color.replace('#', '')]);
-    });
   }
 
   ngOnInit(): void  {
+    this.colorChangedObservable.pipe(debounceTime(500)).subscribe(() => {
+      this.router.navigate(['color', this.color.replace('#', '')]);
+    });
   }
 
   ngOnDestroy(): void {

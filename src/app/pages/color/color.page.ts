@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild, Inject, OnDestroy, HostListener } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { Observable, Subject, Subscription, timer } from 'rxjs';
 import { switchMap, startWith, repeatWhen, takeUntil, debounceTime } from 'rxjs/operators';
@@ -27,6 +27,7 @@ export class ColorPage implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private modalController: ModalController,
     private utilsService: UtilsService,
     @Inject(DOCUMENT) public document: Document) {
@@ -45,8 +46,12 @@ export class ColorPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscriptionUrlChange = this.route.params.subscribe((params) => {
       this.color = params.color;
-      localStorage.setItem('favoriteColor', this.color);
-      this.utilsService.changeThemeColor(this.color);
+      if (this.color) {
+        localStorage.setItem('favoriteColor', this.color);
+        this.utilsService.changeThemeColor(this.color);
+      } else {
+        this.router.navigate(['color', localStorage.getItem('favoriteColor') ? localStorage.getItem('favoriteColor') :  TORONJA_COLOR]);
+      }
     });
 
     this.subjectHideLayout.pipe(debounceTime(3000)).subscribe(() => {

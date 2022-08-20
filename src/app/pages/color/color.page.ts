@@ -37,6 +37,11 @@ export class ColorPage implements OnInit, OnDestroy {
     this.showLayout();
   }
 
+  @HostListener('document:mouseclick', ['$event'])
+  onMouseClick() {
+    this.showLayout();
+  }
+
   ngOnInit() {
     this.subscriptionUrlChange = this.route.params.subscribe((params) => {
       this.color = params.color;
@@ -44,7 +49,7 @@ export class ColorPage implements OnInit, OnDestroy {
       this.utilsService.changeThemeColor(this.color);
     });
 
-    this.subjectHideLayout.pipe(debounceTime(2000)).subscribe(() => {
+    this.subjectHideLayout.pipe(debounceTime(3000)).subscribe(() => {
       this.layoutVisible = false;
     });
   }
@@ -53,7 +58,6 @@ export class ColorPage implements OnInit, OnDestroy {
     this.subscriptionUrlChange.unsubscribe();
     this.subjectHideLayout.unsubscribe();
   }
-
 
   async openColorPicker() {
     const modal = await this.modalController.create({
@@ -74,14 +78,6 @@ export class ColorPage implements OnInit, OnDestroy {
     }
   }
 
-  onClickContainer() {
-    if (this.layoutVisible) {
-      this.layoutVisible = false;
-    } else {
-      this.showLayout();
-    }
-  }
-
   toggleFullScreen() {
     if (!this.document.fullscreenElement) {
         this.document.documentElement.requestFullscreen();
@@ -91,5 +87,4 @@ export class ColorPage implements OnInit, OnDestroy {
       }
     }
   }
-
 }

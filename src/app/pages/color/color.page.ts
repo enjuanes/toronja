@@ -19,7 +19,7 @@ export class ColorPage implements OnInit, OnDestroy {
   colorPickerOpen = false;
   color = TORONJA_COLOR;
 
-  layoutVisible = true;
+  layoutVisible = false;
   isFullscreen = false;
 
   subscriptionUrlChange: Subscription;
@@ -52,8 +52,6 @@ export class ColorPage implements OnInit, OnDestroy {
     this.subjectHideLayout.pipe(debounceTime(3000)).subscribe(() => {
       this.layoutVisible = false;
     });
-
-    this.showLayout();
   }
 
   ngOnDestroy(): void {

@@ -1,9 +1,12 @@
-import { Component, ElementRef, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild, Inject, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModalController } from '@ionic/angular';
+import { Observable, Subject, Subscription, timer } from 'rxjs';
+import { switchMap, startWith, repeatWhen, takeUntil, debounceTime } from 'rxjs/operators';
 import { TORONJA_COLOR } from 'src/app/core/constants';
+import { UtilsService } from 'src/app/core/services/utils/utils.service';
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
-import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-color',
@@ -16,22 +19,44 @@ export class ColorPage implements OnInit, OnDestroy {
   colorPickerOpen = false;
   color = TORONJA_COLOR;
 
-  constructor(route: ActivatedRoute, private modalController: ModalController, @Inject(DOCUMENT) private document: Document) {
-    route.params.subscribe((params) => {
-      this.color = params.color;
-      localStorage.setItem('favoriteColor', this.color);
-      this.changeThemeColor(this.color);
-    });
+  layoutVisible = false;
+  isFullscreen = false;
+
+  subscriptionUrlChange: Subscription;
+  subjectHideLayout: Subject<any> = new Subject();
+
+
+  constructor(
+    private route: ActivatedRoute,
+    private modalController: ModalController,
+    private utilsService: UtilsService,
+    @Inject(DOCUMENT) public document: Document) {
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove() {
+    this.showLayout();
   }
 
   ngOnInit() {
+    this.subscriptionUrlChange = this.route.params.subscribe((params) => {
+      this.color = params.color;
+      localStorage.setItem('favoriteColor', this.color);
+      this.utilsService.changeThemeColor(this.color);
+    });
+
+    this.subjectHideLayout.pipe(debounceTime(2000)).subscribe(() => {
+      this.layoutVisible = false;
+    });
   }
 
-  ngOnDestroy() {
-    this.changeThemeColor(TORONJA_COLOR);
+  ngOnDestroy(): void {
+    this.subscriptionUrlChange.unsubscribe();
+    this.subjectHideLayout.unsubscribe();
   }
 
-  async onClickContainer() {
+
+  async openColorPicker() {
     const modal = await this.modalController.create({
       component: ColorPickerComponent,
       cssClass: 'color-picker-modal',
@@ -43,11 +68,29 @@ export class ColorPage implements OnInit, OnDestroy {
     modal.present();
   }
 
-  changeThemeColor(color: string) {
-    this.document.querySelector('head > meta[name="theme-color"]').remove();
-    const elementTheme = this.document.createElement('meta');
-    elementTheme.setAttribute('name', 'theme-color');
-    elementTheme.setAttribute('content', `#${color}`);
-    this.document.querySelector('head').appendChild(elementTheme);
+  showLayout() {
+    this.layoutVisible = true;
+    if (this.subjectHideLayout) {
+      this.subjectHideLayout.next();
+    }
   }
+
+  onClickContainer() {
+    if (this.layoutVisible) {
+      this.layoutVisible = false;
+    } else {
+      this.showLayout();
+    }
+  }
+
+  toggleFullScreen() {
+    if (!this.document.fullscreenElement) {
+        this.document.documentElement.requestFullscreen();
+    } else {
+      if (this.document.exitFullscreen) {
+        this.document.exitFullscreen();
+      }
+    }
+  }
+
 }

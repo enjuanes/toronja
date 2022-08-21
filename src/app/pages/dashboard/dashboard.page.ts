@@ -20,7 +20,7 @@ export class DashboardPage implements OnInit {
   }
 
   setFavoritePage(page: typeof PAGES[number]) {
-    if (this.favoritePage.code === page.code) {
+    if (this.favoritePage?.code === page.code) {
       this.favoritePage = null;
       localStorage.removeItem(FAVORITE_PAGE_KEY);
     } else {

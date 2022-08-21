@@ -3,14 +3,4 @@ ion-card{
   border-width: 0px;
   border-color: var(--ion-color-toronja);
   transition: 0.05s;
-
-  .favorite-button-hide {
-    display: none;
-  }
-
-  &:hover {
-    .favorite-button-hide {
-      display: block;
-    }
-  }
 }

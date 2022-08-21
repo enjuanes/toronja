@@ -24,7 +24,7 @@
             <ion-list lines="none">
               <ion-item>
                 {{ page.description }}
-                <ion-button (click)="setFavoritePage(page)" slot="end" fill="none" [ngClass]="{'favorite-button-hide': favoritePage?.code !== page.code}">
+                <ion-button (click)="setFavoritePage(page)" slot="end" fill="none">
                   <ion-icon [name]="favoritePage?.code === page.code ? 'star' : 'star-outline'" slot="icon-only" color="warning"></ion-icon>
                 </ion-button>
               </ion-item>

@@ -13,6 +13,9 @@ const routes: Routes = [
       }, {
         path: 'color',
         loadChildren: () => import('../color/color.module').then( m => m.ColorModule)
+      }, {
+        path: 'accelerometer',
+        loadChildren: () => import('../accelerometer/accelerometer.module').then( m => m.AccelerometerModule)
       }
     ]
   }

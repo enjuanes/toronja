@@ -3,18 +3,12 @@ import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { FAVORITE_PAGE_KEY, PAGES } from 'src/app/core/constants';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-declare const Accelerometer;
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
 })
 export class DashboardPage implements OnInit {
-
-  textToShow = 'inital';
-
   pages = PAGES;
 
   favoritePage: typeof PAGES[number];
@@ -23,13 +17,6 @@ export class DashboardPage implements OnInit {
 
   ngOnInit() {
     this.favoritePage = PAGES.find((page) => page.code === localStorage.getItem(FAVORITE_PAGE_KEY));
-
-    const acl = new Accelerometer({frequency: 60});
-    acl.addEventListener('reading', () => {
-      this.textToShow = `x: ${acl.x}, y: ${acl.y}, z: ${acl.z}`;
-    });
-
-    acl.start();
   }
 
   setFavoritePage(page: typeof PAGES[number]) {

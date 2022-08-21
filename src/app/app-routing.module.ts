@@ -10,10 +10,6 @@ const routes: Routes = [
     path: '**',
     redirectTo: '',
     pathMatch: 'full'
-  },
-  {
-    path: 'color',
-    loadChildren: () => import('./pages/color/color.module').then( m => m.ColorModule)
   }
 ];
 

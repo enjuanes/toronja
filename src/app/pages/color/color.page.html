@@ -4,6 +4,9 @@
       <ion-menu-button [menu]="'appMenu'"></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="randomColor()">
+        <ion-icon name="dice" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button fill="clear" (click)="openColorPicker()">
         <ion-icon name="color-palette" slot="icon-only"></ion-icon>
       </ion-button>

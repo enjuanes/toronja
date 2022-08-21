@@ -11,11 +11,11 @@ export class UtilsService {
   }
 
   changeThemeColor(color: string) {
-    this.document.querySelector('head > meta[name="theme-color"]').remove();
-    const elementTheme = this.document.createElement('meta');
-    elementTheme.setAttribute('name', 'theme-color');
-    elementTheme.setAttribute('content', `#${color}`);
-    this.document.querySelector('head').appendChild(elementTheme);
+    const themeColorMeta = this.document.querySelector('head > meta[name="theme-color"]');
+
+    if (themeColorMeta && themeColorMeta.getAttribute('content') !== `#${color}`) {
+      themeColorMeta.setAttribute('content', `#${color}`);
+    }
   }
 
   resetThemeColor() {

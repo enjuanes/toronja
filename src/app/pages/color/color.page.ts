@@ -109,4 +109,14 @@ export class ColorPage implements OnInit, OnDestroy {
       }
     }
   }
+
+  randomColor() {
+    const rndmHex = () => {
+      const decimal = Math.round(Math.random() * 255);
+      const hex = decimal.toString(16);
+      return hex.length > 1 ? hex : `0${hex}`;
+    };
+
+    this.router.navigate([ 'color', `${rndmHex()}${rndmHex()}${rndmHex()}` ]);
+  }
 }

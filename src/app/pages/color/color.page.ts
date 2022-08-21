@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { Observable, Subject, Subscription, timer } from 'rxjs';
 import { switchMap, startWith, repeatWhen, takeUntil, debounceTime } from 'rxjs/operators';
-import { TORONJA_COLOR } from 'src/app/core/constants';
+import { FAVORITE_COLOR_KEY, TORONJA_COLOR } from 'src/app/core/constants';
 import { UtilsService } from 'src/app/core/services/utils/utils.service';
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
 
@@ -49,10 +49,15 @@ export class ColorPage implements OnInit, OnDestroy {
       this.color = params.color;
       if (this.color) {
         this.setIsLight();
-        localStorage.setItem('favoriteColor', this.color);
+        localStorage.setItem(FAVORITE_COLOR_KEY, this.color);
         this.utilsService.changeThemeColor(this.color);
       } else {
-        this.router.navigate(['color', localStorage.getItem('favoriteColor') ? localStorage.getItem('favoriteColor') :  TORONJA_COLOR]);
+        this.router.navigate(
+          [
+            'color',
+            localStorage.getItem(FAVORITE_COLOR_KEY) ? localStorage.getItem(FAVORITE_COLOR_KEY) :  TORONJA_COLOR
+          ]
+        );
       }
     });
 

@@ -6,11 +6,11 @@ import { ColorPage } from './color.page';
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':color',
     component: ColorPage
   },
   {
-    path: ':color',
+    path: '',
     component: ColorPage
   }
 ];

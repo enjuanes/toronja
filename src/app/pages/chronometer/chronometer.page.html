@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button [menu]="'appMenu'"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Chronometer</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="main-container">
+    <div class="chronometer-text">
+      {{ chronometerText }}
+    </div>
+    <div class="buttons">
+      <ion-fab-button *ngIf="!chronometerStart" (click)="start()">
+        <ion-icon name="play"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button *ngIf="chronometerStart" (click)="stop()">
+        <ion-icon name="stop"></ion-icon>
+      </ion-fab-button>
+    </div>
+  </div>
+</ion-content>

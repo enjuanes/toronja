@@ -16,6 +16,9 @@ const routes: Routes = [
       }, {
         path: 'accelerometer',
         loadChildren: () => import('../accelerometer/accelerometer.module').then( m => m.AccelerometerModule)
+      }, {
+        path: 'chronometer',
+        loadChildren: () => import('../chronometer/chronometer.module').then( m => m.ChronometerModule)
       }
     ]
   }

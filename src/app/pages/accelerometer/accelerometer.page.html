@@ -6,12 +6,34 @@
     <ion-title>Accelerometer</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content class="ion-padding">
+<ion-content
+  class="ion-padding"
+  [ngStyle]="{'--background': cordLocked ? 'linear-gradient(90deg, var(--ion-color-light) 0%, var(--ion-color-light) ' + dataPerct[cordLocked] + ', var(--ion-color-primary) ' + dataPerct[cordLocked] + ', var(--ion-color-primary) 100%)' : 'none'}"
+>
+  <div *ngIf="cordLocked" class="mid-line"></div>
   <div class="main-container">
     <ng-container *ngIf="accelerometerIsRead; else notCompatible">
-      <div>x: {{ x }}</div>
-      <div>y: {{ y }}</div>
-      <div>z: {{ z }}</div>
+      <div class="cord" *ngIf="!cordLocked || cordLocked === 'x'">
+        <ion-button shape="round" (click)="lockCord('x')">
+          <ion-icon [name]="cordLocked === 'x' ? 'lock-closed' : 'lock-open-outline'"></ion-icon>
+          <span class="ion-padding-start">X</span>
+        </ion-button>
+        <span>{{ data.x }}</span>
+      </div>
+      <div class="cord" *ngIf="!cordLocked || cordLocked === 'y'">
+        <ion-button shape="round" (click)="lockCord('y')">
+          <ion-icon [name]="cordLocked === 'y' ? 'lock-closed' : 'lock-open-outline'"></ion-icon>
+          <span class="ion-padding-start">Y</span>
+        </ion-button>
+        <span>{{ data.y }}</span>
+      </div>
+      <div class="cord" *ngIf="!cordLocked || cordLocked === 'z'">
+        <ion-button shape="round" (click)="lockCord('z')">
+          <ion-icon [name]="cordLocked === 'z' ? 'lock-closed' : 'lock-open-outline'"></ion-icon>
+          <span class="ion-padding-start">Z</span>
+        </ion-button>
+        <span>{{ data.z }}</span>
+      </div>
     </ng-container>
   </div>
 </ion-content>

@@ -9,6 +9,10 @@ const routes: Routes = [
     component: CountdownPage
   },
   {
+    path: ':time',
+    component: CountdownPage
+  },
+  {
     path: ':time/:name',
     component: CountdownPage
   }

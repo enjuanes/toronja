@@ -39,13 +39,17 @@ export class CountdownPage {
   formDefinition() {
     this.countdownForm = this.formBuilder.group({
       time: [null, Validators.required],
-      name: [null, Validators.required]
+      name: [null]
     });
   };
 
   onSubmitFormCountdown() {
     const value = this.countdownForm.value;
-    this.router.navigate(['/countdown', new Date(value.time).getTime() / 1000, value.name]);
+    if (value.name) {
+      this.router.navigate(['/countdown', new Date(value.time).getTime() / 1000, value.name]);
+    } else {
+      this.router.navigate(['/countdown', new Date(value.time).getTime() / 1000]);
+    }
   }
 
   ionViewDidEnter() {

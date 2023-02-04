@@ -22,7 +22,7 @@
     </form>
     </ng-container>
     <ng-container *ngIf="isCountdownMode">
-      <div class="countdown-text">
+      <div class="countdown-text" *ngIf="countdownName">
         {{ countdownName }}
       </div>
       <div class="countdown-time">

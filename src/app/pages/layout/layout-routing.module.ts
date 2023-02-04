@@ -19,6 +19,9 @@ const routes: Routes = [
       }, {
         path: 'chronometer',
         loadChildren: () => import('../chronometer/chronometer.module').then( m => m.ChronometerModule)
+      }, {
+        path: 'countdown',
+        loadChildren: () => import('../countdown/countdown.module').then( m => m.CountdownModule)
       }
     ]
   }

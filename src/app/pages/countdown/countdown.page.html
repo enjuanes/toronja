@@ -1,0 +1,33 @@
+<ion-header *ngIf="!isCountdownMode">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button [menu]="'appMenu'"></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Countdown</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="main-container">
+    <ng-container *ngIf="!isCountdownMode">
+      <form [formGroup]="countdownForm" (ngSubmit)="onSubmitFormCountdown()">
+      <div>
+        <label>Name</label>
+        <input formControlName="name" type="text">
+      </div>
+      <div>
+        <label>Time</label>
+        <input formControlName="time" type="datetime-local">
+      </div>
+      <ion-button type="submit" [disabled]="countdownForm.invalid">Create</ion-button>
+    </form>
+    </ng-container>
+    <ng-container *ngIf="isCountdownMode">
+      <div class="countdown-text">
+        {{ countdownName }}
+      </div>
+      <div class="countdown-time">
+        {{ countdownTimeLeft }}
+      </div>
+    </ng-container>
+  </div>
+</ion-content>

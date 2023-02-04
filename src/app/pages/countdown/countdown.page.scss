@@ -1,0 +1,41 @@
+.main-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+
+    &>div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      label {
+        font-size: 1.2rem;
+      }
+      input {
+        padding: 4px 8px;
+        font-size: 1.1rem;
+      }
+    }
+
+    ion-button {
+      width: 100px;
+    }
+  }
+
+  .countdown-text {
+    font-size: calc(15px + 3vw);
+  }
+
+  .countdown-time {
+    font-size: calc(10px + 3vw);
+  }
+}

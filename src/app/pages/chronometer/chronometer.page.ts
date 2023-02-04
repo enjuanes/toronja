@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { CHRONOMETER_START_KEY } from 'src/app/core/constants';
 
@@ -30,7 +30,7 @@ export class ChronometerPage {
           secondsDiff = secondsDiff % 60;
         }
 
-        let hoursDiff = Math.floor(minutesDiff / 60);
+        const hoursDiff = Math.floor(minutesDiff / 60);
         if (hoursDiff) {
           minutesDiff = minutesDiff % 60;
         }

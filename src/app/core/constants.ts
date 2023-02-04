@@ -14,6 +14,11 @@ export const PAGES = [
     description: 'A simple chronometer',
     icon: 'timer',
     code: 'chronometer',
+  }, {
+    title: 'Countdown',
+    description: 'A countdown to important moments',
+    icon: 'hourglass-outline',
+    code: 'countdown',
   }
 ];
 

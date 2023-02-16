@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { MenuController } from '@ionic/angular';
 import { FAVORITE_PAGE_KEY, PAGES } from 'src/app/core/constants';
 
@@ -13,7 +12,7 @@ export class DashboardPage implements OnInit {
 
   favoritePage: typeof PAGES[number];
 
-  constructor(private menuController: MenuController, private router: Router) { }
+  constructor(private menuController: MenuController) { }
 
   ngOnInit() {
     this.favoritePage = PAGES.find((page) => page.code === localStorage.getItem(FAVORITE_PAGE_KEY));

@@ -17,8 +17,13 @@ export const PAGES = [
   }, {
     title: 'Countdown',
     description: 'A countdown to important moments',
-    icon: 'hourglass-outline',
+    icon: 'calendar-number',
     code: 'countdown',
+  }, {
+    title: 'Timers',
+    description: 'Create timers for specific things',
+    icon: 'hourglass-outline',
+    code: 'timers',
   }
 ];
 

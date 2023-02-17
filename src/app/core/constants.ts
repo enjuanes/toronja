@@ -23,9 +23,11 @@ export const PAGES = [
     title: 'Timers',
     description: 'Create timers for specific things',
     icon: 'hourglass-outline',
-    code: 'timers',
+    code: 'timer',
   }
 ];
+
+export const TIMER_DB_NAME = 'timers';
 
 export const TORONJA_COLOR = 'f76304';
 

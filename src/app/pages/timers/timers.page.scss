@@ -1,0 +1,41 @@
+.main-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  .timer-list-actions, ion-list {
+    min-width: 500px;
+    max-width: 100%;
+  }
+
+  .timer-text {
+    font-size: 70px;
+  }
+
+  .timer-list-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  ion-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    .timer-name {
+      font-weight: bold;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .timer-time {
+
+    }
+  }
+
+  .timer-buttons {
+  }
+}

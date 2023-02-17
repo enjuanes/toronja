@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { FavoritePageGuard } from 'src/app/core/guards/favorite-page.guard';
 import { LayoutPage } from './layout.page';
 
@@ -24,6 +24,9 @@ const routes: Routes = [
       }, {
         path: 'countdown',
         loadChildren: () => import('../countdown/countdown.module').then( m => m.CountdownModule)
+      }, {
+        path: 'timer',
+        loadChildren: () => import('../timers/timers.module').then( m => m.TimersModule)
       }
     ]
   }

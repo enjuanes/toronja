@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 import { TORONJA_COLOR } from '../../constants';
 
 @Injectable({
@@ -7,7 +8,7 @@ import { TORONJA_COLOR } from '../../constants';
 })
 export class UtilsService {
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
+  constructor(@Inject(DOCUMENT) private document: Document, private toastController: ToastController) {
   }
 
   changeThemeColor(color: string) {
@@ -20,5 +21,12 @@ export class UtilsService {
 
   resetThemeColor() {
     this.changeThemeColor(TORONJA_COLOR);
+  }
+
+  showToast(message: string, duration: number = 2000) {
+   return this.toastController.create({
+      message,
+      duration
+    }).then(toast => toast.present());
   }
 }

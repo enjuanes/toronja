@@ -12,7 +12,10 @@
       {{ chronometerText }}
     </div>
     <div class="buttons">
-      <ion-fab-button *ngIf="!chronometerStart" (click)="start()">
+      <ion-fab-button *ngIf="chronometerStart && !chronometerPause" (click)="pause()">
+        <ion-icon name="pause"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button *ngIf="!chronometerStart || chronometerPause" (click)="start()">
         <ion-icon name="play"></ion-icon>
       </ion-fab-button>
       <ion-fab-button *ngIf="chronometerStart" (click)="stop()">

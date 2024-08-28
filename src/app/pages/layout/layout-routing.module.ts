@@ -27,6 +27,9 @@ const routes: Routes = [
       }, {
         path: 'timer',
         loadChildren: () => import('../timers/timers.module').then( m => m.TimersModule)
+      }, {
+        path: 'nadie',
+        loadChildren: () => import('../nadie/nadie.module').then( m => m.NadieModule)
       }
     ]
   }

@@ -24,6 +24,11 @@ export const PAGES = [
     description: 'Create timers for specific things',
     icon: 'hourglass-outline',
     code: 'timer',
+  }, {
+    title: 'Nadie Sabe Nada',
+    description: 'Redirect to a random episode of Nadie Sabe Nada podcast',
+    icon: 'mic',
+    code: 'nadie',
   }
 ];
 

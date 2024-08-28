@@ -430,7 +430,7 @@ export class NadiePage implements OnInit {
   ngOnInit() {
     const videoId = this.videosId[this.randomNumber(this.videosId.length - 1)];
 
-    const youtubeAppUrl = `youtube://www.youtube.com/watch?v=${videoId}&list=${this.playlistId}`
+    const youtubeAppUrl = `youtube://${videoId}`
     const youtubeWebUrl = `https://www.youtube.com/watch?v=${videoId}&list=${this.playlistId}`;
 
     window.location.href = youtubeAppUrl;

@@ -444,3 +444,19 @@ export class NadiePage implements OnInit {
     return Math.floor(Math.random() * max);
   }
 }
+
+// Python Script to obtain videosId list
+/*
+from pytube import Playlist
+
+playlist_url = "https://www.youtube.com/playlist?list=PLdLacESORkt0t5eWPEtgCevDloY9l8Fvp"
+
+playlist = Playlist(playlist_url)
+
+with open('videos_id.txt', 'w', encoding='utf-8') as file:
+    for video in playlist.videos:
+        video_id = video.video_id
+        file.write('\'' + video_id + '\',\n')
+
+print("IDs saved in 'videos_id.txt'")
+*/

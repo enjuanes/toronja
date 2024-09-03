@@ -9,6 +9,7 @@ import { environment } from '../environments/environment';
 import { ScreenTrackingService,UserTrackingService } from '@angular/fire/analytics';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { DBConfig, NgxIndexedDBModule } from 'ngx-indexed-db';
+import { HttpClientModule } from '@angular/common/http';
 
 const dbConfig: DBConfig  = {
   name: 'ToronjaDb',
@@ -29,6 +30,7 @@ const dbConfig: DBConfig  = {
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    HttpClientModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,

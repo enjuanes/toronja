@@ -1,0 +1,28 @@
+ion-header {
+    &::after {
+      display: none;
+    }
+  }
+  
+.prediction-grid {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 200px);
+  align-items: center;
+  justify-content: center;
+
+  & > div {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.min {
+  color: var(--ion-color-primary);
+}
+
+.max {
+  color: var(--ion-color-danger);
+}

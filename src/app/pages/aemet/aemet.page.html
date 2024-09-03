@@ -1,0 +1,23 @@
+<ion-header mode="md">
+  <ion-toolbar [ngStyle]="{'--background': 'transparent'}">
+    <ion-buttons slot="start" *ngIf="layoutVisible">
+      <ion-menu-button [menu]="'appMenu'"></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="layoutVisible">      
+      <ion-button fill="clear" (click)="openAemetConfig()">
+        <ion-icon name="cog" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="toggleFullScreen()">
+        <ion-icon [name]="!document.fullscreenElement ? 'expand' : 'contract'" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="prediction-grid">
+    <div *ngFor="let item of data">
+      <div>{{ item.date }}</div>
+      <div><span class="min">{{ item.tempMin }}</span> / <span class="max">{{ item.tempMax }}</span></div>
+    </div>
+  </div>
+</ion-content>

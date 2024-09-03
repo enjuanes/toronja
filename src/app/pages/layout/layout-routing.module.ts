@@ -30,6 +30,9 @@ const routes: Routes = [
       }, {
         path: 'nadie',
         loadChildren: () => import('../nadie/nadie.module').then( m => m.NadieModule)
+      }, {
+        path: 'aemet',
+        loadChildren: () => import('../aemet/aemet.module').then( m => m.AemetModule)
       }
     ]
   }

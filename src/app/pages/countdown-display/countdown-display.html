@@ -1,0 +1,18 @@
+<main class="flex h-dvh flex-col items-center justify-center gap-4 px-4">
+  @if (name(); as countdownName) {
+    <p class="countdown-name text-center">
+      {{ countdownName }}
+    </p>
+  }
+
+  <p
+    class="countdown-time text-center font-light tabular-nums"
+    [class.text-red-500]="isPast()"
+    [class.dark:text-red-400]="isPast()"
+    role="timer"
+    aria-live="polite"
+    [attr.aria-label]="'Countdown: ' + display()"
+  >
+    {{ display() }}
+  </p>
+</main>

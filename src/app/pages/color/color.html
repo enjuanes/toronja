@@ -1,0 +1,93 @@
+<app-sidebar [(open)]="sidebarOpen" />
+
+<div
+  class="h-dvh relative"
+  [style.background-color]="'#' + color()"
+  [class.cursor-none]="!headerVisible()"
+  (mousemove)="onMouseMove()"
+  (click)="onMouseMove()"
+>
+  <header
+    class="header fixed top-0 right-0 left-0 z-10 flex items-center justify-between px-4 py-3 transition-opacity duration-300"
+    [class.opacity-0]="!headerVisible()"
+    [class.pointer-events-none]="!headerVisible()"
+  >
+    <button
+      type="button"
+      (click)="sidebarOpen.set(true)"
+      aria-label="Open menu"
+      class="flex cursor-pointer rounded-lg p-2 transition hover:bg-black/10"
+    >
+      <span class="material-symbols-rounded" [class]="iconColor()" aria-hidden="true">menu</span>
+    </button>
+
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        (click)="randomColor()"
+        aria-label="Random color"
+        class="flex cursor-pointer rounded-lg p-2 transition hover:bg-black/10"
+      >
+        <span class="material-symbols-rounded" [class]="iconColor()" aria-hidden="true">
+          casino
+        </span>
+      </button>
+
+      <button
+        type="button"
+        (click)="openPicker()"
+        aria-label="Pick a color"
+        class="flex cursor-pointer rounded-lg p-2 transition hover:bg-black/10"
+      >
+        <span class="material-symbols-rounded" [class]="iconColor()" aria-hidden="true">
+          palette
+        </span>
+      </button>
+
+      <button
+        type="button"
+        (click)="toggleFullscreen()"
+        aria-label="Toggle fullscreen"
+        class="flex cursor-pointer rounded-lg p-2 transition hover:bg-black/10"
+      >
+        <span class="material-symbols-rounded" [class]="iconColor()" aria-hidden="true">
+          fullscreen
+        </span>
+      </button>
+    </div>
+  </header>
+</div>
+<dialog
+  #colorDialog
+  (click)="onDialogClick($event)"
+  class="m-auto backdrop:bg-transparent rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-900"
+>
+  <div class="flex flex-col items-center gap-5" [formGroup]="pickerForm">
+    <div class="flex w-full items-center justify-between">
+      <h2 class="text-lg font-semibold">Pick a color</h2>
+      <button
+        type="button"
+        (click)="closePicker()"
+        aria-label="Close"
+        class="flex cursor-pointer rounded-lg p-1 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+    <input
+      type="color"
+      formControlName="picker"
+      class="cursor-pointer w-32 h-32"
+      aria-label="Color picker"
+    />
+    <div class="flex w-full items-center gap-2">
+      <input
+        type="text"
+        formControlName="hex"
+        maxlength="7"
+        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 font-mono transition focus:border-toronja-500 focus:ring-2 focus:ring-toronja-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800"
+        aria-label="Hex color code"
+      />
+    </div>
+  </div>
+</dialog>

@@ -1,0 +1,48 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Segoe UI Emoji';
+  src: url('/fonts/segoe-ui-emoji.woff2') format('woff2');
+  font-display: swap;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Segoe UI Emoji', 'Roboto', sans-serif;
+  --color-toronja-50: #fff7ed;
+  --color-toronja-100: #ffedd5;
+  --color-toronja-200: #fdd6a9;
+  --color-toronja-300: #fbb87a;
+  --color-toronja-400: #f98e40;
+  --color-toronja-500: #f76304;
+  --color-toronja-600: #e04f03;
+  --color-toronja-700: #b83a05;
+  --color-toronja-800: #932f0a;
+  --color-toronja-900: #79290e;
+  --color-toronja-950: #421206;
+}
+
+.material-symbols-rounded {
+  --fill: 0;
+  --wght: 400;
+  --grad: 0;
+  --opsz: 24;
+
+  font-variation-settings:
+    'FILL' var(--fill),
+    'wght' var(--wght),
+    'GRAD' var(--grad),
+    'opsz' var(--opsz);
+}
+
+.material-symbols-rounded.filled {
+  --fill: 1;
+}
+
+dialog {
+  color: inherit;
+}

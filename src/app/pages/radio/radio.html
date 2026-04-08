@@ -1,0 +1,188 @@
+<app-sidebar [(open)]="sidebarOpen" />
+
+<header
+  class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-900"
+>
+  <div class="flex items-center gap-3">
+    <button
+      type="button"
+      (click)="sidebarOpen.set(true)"
+      aria-label="Open menu"
+      class="flex cursor-pointer rounded-lg p-1 text-gray-600 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+    </button>
+    <h1 class="text-xl font-bold">Radio</h1>
+  </div>
+
+  <div class="flex items-center gap-1">
+    <button
+      type="button"
+      (click)="resetStations()"
+      title="Reset to default stations"
+      aria-label="Reset to default stations"
+      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">reset_settings</span>
+    </button>
+    <button
+      type="button"
+      (click)="isDeleteMode.set(!isDeleteMode())"
+      [title]="isDeleteMode() ? 'Exit delete mode' : 'Enter delete mode'"
+      [aria-label]="isDeleteMode() ? 'Exit delete mode' : 'Enter delete mode'"
+      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+    >
+      <span [class.filled]="isDeleteMode()" class="material-symbols-rounded" aria-hidden="true">
+        delete
+      </span>
+    </button>
+    <button
+      type="button"
+      (click)="openAddDialog()"
+      title="Add Station"
+      aria-label="Add radio station"
+      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">add</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section
+    class="mx-auto max-w-450 grid grid-cols-1 gap-4 pt-6 pb-14 md:pt-16 lg:pt-32 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+  >
+    @for (station of stations(); track station.id) {
+      <article
+        class="flex items-center gap-4 rounded-2xl border bg-white/60 p-4 shadow-sm backdrop-blur-md transition-all dark:bg-white/5"
+        [class]="
+          playingId() === station.id
+            ? ' border-toronja-300 dark:border-toronja-500 shadow-lg'
+            : 'border-gray-200 dark:border-gray-700'
+        "
+      >
+        <span class="text-3xl" [class.rainbow]="playingId() === station.id" aria-hidden="true">{{
+          station.emoji
+        }}</span>
+        <div class="min-w-0 flex-1">
+          <h2 class="font-semibold wrap-break-word">
+            {{ station.name }}
+          </h2>
+        </div>
+        @if (!isDeleteMode()) {
+          @if (playingId() === station.id) {
+            <button
+              type="button"
+              (click)="stopPlayback()"
+              [attr.aria-label]="'Stop ' + station.name"
+              class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-full p-2 transition"
+            >
+              <span class="material-symbols-rounded filled" aria-hidden="true">stop</span>
+            </button>
+          } @else {
+            <button
+              type="button"
+              (click)="playStation(station)"
+              [attr.aria-label]="'Play ' + station.name"
+              class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-full p-2 transition"
+              [disabled]="isLoadingStationId() === station.id"
+              [class.animate-spin]="isLoadingStationId() === station.id"
+            >
+              <span class="material-symbols-rounded filled" aria-hidden="true">
+                {{ isLoadingStationId() === station.id ? 'progress_activity' : 'play_arrow' }}
+              </span>
+            </button>
+          }
+        } @else {
+          <button
+            type="button"
+            (click)="deleteStation(station.id!)"
+            [attr.aria-label]="'Delete ' + station.name"
+            class="flex cursor-pointer rounded-full p-2 text-gray-400 transition hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950"
+          >
+            <span class="material-symbols-rounded" aria-hidden="true">delete</span>
+          </button>
+        }
+      </article>
+    } @empty {
+      <p class="col-span-full py-16 text-center text-gray-400 dark:text-gray-600">
+        No stations yet. Tap <strong>+</strong> to add one.
+      </p>
+    }
+  </section>
+</main>
+<footer
+  class="w-full fixed bottom-0 z-10 text-center py-3 text-gray-400 dark:bg-gray-950 dark:text-gray-600"
+>
+  These stations were sourced thanks to
+  <a
+    href="https://github.com/LaQuay/TDTChannels/blob/master/RADIO.md"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="underline"
+    >TDTChannels</a
+  >
+  and
+  <a href="https://fallout.fm/" target="_blank" rel="noopener noreferrer" class="underline"
+    >Fallout.FM</a
+  >. You can find more stations there.
+</footer>
+
+<dialog
+  #addDialog
+  class="m-auto w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-0 shadow-xl backdrop:bg-black/40 dark:border-gray-700 dark:bg-gray-900"
+  (click)="onAddDialogClick($event)"
+>
+  <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()" class="flex flex-col gap-4 p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-bold">Add Station</h2>
+      <button
+        type="button"
+        (click)="closeAddDialog()"
+        aria-label="Close"
+        class="flex cursor-pointer rounded-lg p-1 text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <label class="flex flex-col gap-1">
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Emoji</span>
+      <input
+        formControlName="emoji"
+        placeholder="📻"
+        class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
+      />
+    </label>
+
+    <label class="flex flex-col gap-1">
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Name</span>
+      <input
+        formControlName="name"
+        placeholder="Radio 1"
+        class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
+      />
+    </label>
+
+    <label class="flex flex-col gap-1">
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300"
+        >URL <span class="text-red-500">*</span></span
+      >
+      <input
+        formControlName="url"
+        type="url"
+        placeholder="https://stream.example.com/radio.mp3"
+        required
+        class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
+      />
+    </label>
+
+    <button
+      type="submit"
+      [disabled]="addForm.invalid"
+      class="bg-toronja-500 hover:bg-toronja-600 mt-2 cursor-pointer rounded-lg px-4 py-2 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      Add
+    </button>
+  </form>
+</dialog>

@@ -50,60 +50,60 @@
 
 <main>
   <section
-    class="mx-auto max-w-450 grid grid-cols-1 gap-4 pt-6 pb-14 md:pt-16 lg:pt-32 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+    class="mx-auto max-w-450 grid grid-cols-1 gap-4 pt-6 pb-24 md:pt-16 lg:pt-32 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:pb-14"
   >
     @for (station of stations(); track station.id) {
-      <article
-        class="flex items-center gap-4 rounded-2xl border bg-white/60 p-4 shadow-sm backdrop-blur-md transition-all dark:bg-white/5"
-        [class]="
-          playingId() === station.id
-            ? ' border-toronja-300 dark:border-toronja-500 shadow-lg'
-            : 'border-gray-200 dark:border-gray-700'
-        "
-      >
-        <span class="text-3xl" [class.rainbow]="playingId() === station.id" aria-hidden="true">{{
-          station.emoji
-        }}</span>
-        <div class="min-w-0 flex-1">
-          <h2 class="font-semibold wrap-break-word">
-            {{ station.name }}
-          </h2>
-        </div>
-        @if (!isDeleteMode()) {
-          @if (playingId() === station.id) {
-            <button
-              type="button"
-              (click)="stopPlayback()"
-              [attr.aria-label]="'Stop ' + station.name"
-              class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-full p-2 transition"
-            >
-              <span class="material-symbols-rounded filled" aria-hidden="true">stop</span>
-            </button>
-          } @else {
-            <button
-              type="button"
-              (click)="playStation(station)"
-              [attr.aria-label]="'Play ' + station.name"
-              class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-full p-2 transition"
-              [disabled]="isLoadingStationId() === station.id"
-              [class.animate-spin]="isLoadingStationId() === station.id"
-            >
-              <span class="material-symbols-rounded filled" aria-hidden="true">
-                {{ isLoadingStationId() === station.id ? 'progress_activity' : 'play_arrow' }}
-              </span>
-            </button>
-          }
-        } @else {
-          <button
-            type="button"
-            (click)="deleteStation(station.id!)"
-            [attr.aria-label]="'Delete ' + station.name"
-            class="flex cursor-pointer rounded-full p-2 text-gray-400 transition hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950"
+      @if (isDeleteMode()) {
+        <button
+          type="button"
+          (click)="deleteStation(station.id!)"
+          [attr.aria-label]="'Delete ' + station.name"
+          class="group flex cursor-pointer items-center gap-4 rounded-2xl border border-gray-200 bg-white/60 p-4 text-left shadow-sm backdrop-blur-md transition-all hover:bg-gray-100/60 dark:border-gray-700 dark:bg-white/5 dark:hover:bg-white/10 hover:border-red-500"
+        >
+          <span class="text-3xl" aria-hidden="true">{{ station.emoji }}</span>
+          <div class="min-w-0 flex-1">
+            <h2 class="font-semibold wrap-break-word">{{ station.name }}</h2>
+          </div>
+          <span
+            class="material-symbols-rounded text-gray-400 group-hover:text-red-500"
+            aria-hidden="true"
+            >delete</span
           >
-            <span class="material-symbols-rounded" aria-hidden="true">delete</span>
-          </button>
-        }
-      </article>
+        </button>
+      } @else {
+        <button
+          type="button"
+          (click)="playingId() === station.id ? stopPlayback() : playStation(station)"
+          [attr.aria-label]="(playingId() === station.id ? 'Stop ' : 'Play ') + station.name"
+          [disabled]="isLoadingStationId() === station.id"
+          class="flex cursor-pointer items-center gap-4 rounded-2xl border bg-white/60 p-4 text-left shadow-sm backdrop-blur-md transition-all hover:bg-gray-100/60 dark:bg-white/5 dark:hover:bg-white/10"
+          [class]="
+            playingId() === station.id
+              ? 'border-toronja-300 dark:border-toronja-500 shadow-lg'
+              : 'border-gray-200 dark:border-gray-700 '
+          "
+        >
+          <span class="text-3xl" [class.rainbow]="playingId() === station.id" aria-hidden="true">{{
+            station.emoji
+          }}</span>
+          <div class="min-w-0 flex-1">
+            <h2 class="font-semibold wrap-break-word">{{ station.name }}</h2>
+          </div>
+          @if (isLoadingStationId() === station.id) {
+            <span class="material-symbols-rounded text-toronja-500 animate-spin" aria-hidden="true">
+              progress_activity
+            </span>
+          } @else if (playingId() === station.id) {
+            <span class="material-symbols-rounded filled text-toronja-500" aria-hidden="true">
+              stop
+            </span>
+          } @else {
+            <span class="material-symbols-rounded filled text-toronja-500" aria-hidden="true">
+              play_arrow
+            </span>
+          }
+        </button>
+      }
     } @empty {
       <p class="col-span-full py-16 text-center text-gray-400 dark:text-gray-600">
         No stations yet. Tap <strong>+</strong> to add one.
@@ -131,7 +131,6 @@
 <dialog
   #addDialog
   class="m-auto w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-0 shadow-xl backdrop:bg-black/40 dark:border-gray-700 dark:bg-gray-900"
-  (click)="onAddDialogClick($event)"
 >
   <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()" class="flex flex-col gap-4 p-6">
     <div class="flex items-center justify-between">
@@ -151,6 +150,7 @@
       <input
         formControlName="emoji"
         placeholder="📻"
+        [maxlength]="4"
         class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
       />
     </label>
@@ -160,6 +160,7 @@
       <input
         formControlName="name"
         placeholder="Radio 1"
+        [maxlength]="50"
         class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
       />
     </label>

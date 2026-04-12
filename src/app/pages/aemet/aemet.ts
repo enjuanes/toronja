@@ -8,8 +8,8 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Sidebar } from '../../core/components/sidebar/sidebar';
 import { AemetDay, AemetService } from '../../core/services/aemet.service';
-import { Sidebar } from '../../core/sidebar/sidebar';
 
 export const DEFAULT_MUNICIPALITY = '50297';
 const LS_API_KEY = 'AEMET_API_KEY';

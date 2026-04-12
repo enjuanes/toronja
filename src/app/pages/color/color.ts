@@ -15,8 +15,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, Subject } from 'rxjs';
+import { Sidebar } from '../../core/components/sidebar/sidebar';
 import { ColorService } from '../../core/services/color.service';
-import { Sidebar } from '../../core/sidebar/sidebar';
 
 export const DEFAULT_COLOR = 'f76304';
 export const FAVORITE_COLOR_KEY = 'FAVORITE_COLOR';
@@ -59,9 +59,7 @@ export class Color {
     return (r + g + b) / 3 > 127.5;
   });
 
-  protected readonly iconColor = computed(() =>
-    this.isLight() ? 'text-black' : 'text-white'
-  );
+  protected readonly iconColor = computed(() => (this.isLight() ? 'text-black' : 'text-white'));
 
   constructor() {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
@@ -84,13 +82,11 @@ export class Color {
       this.titleService.setTitle(this.colorService.getColorName(this.color()));
     });
 
-    this.hideSubject
-      .pipe(debounceTime(3000), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        if (!this.dialogOpen() && !this.sidebarOpen()) {
-          this.headerVisible.set(false);
-        }
-      });
+    this.hideSubject.pipe(debounceTime(3000), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (!this.dialogOpen() && !this.sidebarOpen()) {
+        this.headerVisible.set(false);
+      }
+    });
 
     this.pickerForm.controls.picker.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))

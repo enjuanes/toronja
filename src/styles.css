@@ -12,7 +12,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Segoe UI Emoji', 'Roboto', sans-serif;
+  --font-sans: 'Roboto', sans-serif;
   --color-toronja-50: #fff7ed;
   --color-toronja-100: #ffedd5;
   --color-toronja-200: #fdd6a9;
@@ -24,6 +24,10 @@
   --color-toronja-800: #932f0a;
   --color-toronja-900: #79290e;
   --color-toronja-950: #421206;
+}
+
+.segoe-emoji {
+  font-family: 'Segoe UI Emoji', 'Roboto', sans-serif;
 }
 
 .material-symbols-rounded {

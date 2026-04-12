@@ -11,8 +11,9 @@ import {
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import Hls from 'hls.js';
+import { Sidebar } from '../../core/components/sidebar/sidebar';
+import { EmojiArtworkService } from '../../core/services/emoji-artwork.service';
 import { RadioService, RadioStation } from '../../core/services/radio.service';
-import { Sidebar } from '../../core/sidebar/sidebar';
 
 @Component({
   selector: 'app-radio',
@@ -25,9 +26,10 @@ export class Radio implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly titleService = inject(Title);
+  private readonly emojiArtwork = inject(EmojiArtworkService);
 
   private readonly addDialog = viewChild<ElementRef<HTMLDialogElement>>('addDialog');
-  private audioElement: HTMLAudioElement | null = null;
+  private audioElement: HTMLVideoElement | null = null;
   private hls: Hls | null = null;
 
   protected sidebarOpen = signal(false);
@@ -35,7 +37,6 @@ export class Radio implements OnInit {
   protected readonly playingId = signal<number | null>(null);
   protected isLoadingStationId = signal<number | null>(null);
   protected isDeleteMode = signal(false);
-
 
   protected readonly addForm = this.fb.group({
     emoji: [''],
@@ -64,12 +65,6 @@ export class Radio implements OnInit {
 
   protected closeAddDialog(): void {
     this.addDialog()?.nativeElement.close();
-  }
-
-  protected onAddDialogClick(event: MouseEvent): void {
-    if (event.target === this.addDialog()?.nativeElement) {
-      this.closeAddDialog();
-    }
   }
 
   protected async onAddSubmit(): Promise<void> {
@@ -104,11 +99,16 @@ export class Radio implements OnInit {
     }
   }
 
-
   protected playStation(station: RadioStation): void {
     this.stopPlayback();
 
-    this.audioElement = new Audio();
+    this.audioElement = document.createElement('video');
+
+    // set station name in video element
+    this.audioElement.setAttribute('title', station.name + 'asdasd');
+    this.audioElement.onpause = () => {
+      this.stopPlayback();
+    };
 
     let playPromise: Promise<void> = Promise.resolve();
 
@@ -117,27 +117,29 @@ export class Radio implements OnInit {
     if (url.includes('.m3u8')) {
       if (this.audioElement.canPlayType('application/vnd.apple.mpegurl')) {
         this.audioElement.src = url;
-        playPromise = this.audioElement.play()
+        playPromise = this.audioElement.play();
       } else if (Hls.isSupported()) {
         this.hls = new Hls();
         this.hls.loadSource(url);
         this.hls.attachMedia(this.audioElement);
-        playPromise = this.audioElement.play()
+        playPromise = this.audioElement.play();
       }
     } else {
       this.audioElement.src = url;
-      playPromise = this.audioElement.play()
+      playPromise = this.audioElement.play();
     }
 
-    playPromise?.then(() => {
-      this.isLoadingStationId.set(null);
-      this.playingId.set(station.id!);
-      this.titleService.setTitle(`${station.emoji} ${station.name}`);
-    }).catch(() => {
-      this.stopPlayback();
-      alert('Failed to play the station. Please check the URL or try another station.');
-    });
-
+    playPromise
+      ?.then(() => {
+        this.isLoadingStationId.set(null);
+        this.playingId.set(station.id!);
+        this.titleService.setTitle(`${station.emoji} ${station.name}`);
+        this.updateMediaSession(station);
+      })
+      .catch(() => {
+        this.stopPlayback();
+        alert('Failed to play the station. Please check the URL or try another station.');
+      });
   }
 
   protected stopPlayback(): void {
@@ -146,6 +148,7 @@ export class Radio implements OnInit {
       this.hls = null;
     }
     if (this.audioElement) {
+      this.audioElement.onpause = null;
       this.audioElement.pause();
       this.audioElement.src = '';
       this.audioElement = null;
@@ -153,5 +156,55 @@ export class Radio implements OnInit {
     this.isLoadingStationId.set(null);
     this.playingId.set(null);
     this.titleService.setTitle('Radio');
+  }
+
+  private updateMediaSession(station: RadioStation): void {
+    if (!('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: `${station.emoji} ${station.name}`,
+      artwork: [
+        {
+          src: this.emojiArtwork.generateArtworkUrl(station.emoji, 128),
+          sizes: '128x128',
+          type: 'image/png',
+        },
+        {
+          src: this.emojiArtwork.generateArtworkUrl(station.emoji, 256),
+          sizes: '256x256',
+          type: 'image/png',
+        },
+        {
+          src: this.emojiArtwork.generateArtworkUrl(station.emoji, 512),
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => {
+      this.audioElement?.play();
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+      this.stopPlayback();
+    });
+
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      this.playAdjacentStation(-1);
+    });
+
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      this.playAdjacentStation(1);
+    });
+  }
+
+  private playAdjacentStation(direction: 1 | -1): void {
+    const list = this.stations();
+    if (list.length === 0) return;
+
+    const currentIndex = list.findIndex((s) => s.id === this.playingId());
+    const nextIndex = (currentIndex + direction + list.length) % list.length;
+    this.playStation(list[nextIndex]);
   }
 }

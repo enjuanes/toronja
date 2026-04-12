@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, model } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { PAGES } from '../../core/constants';
-import { ThemeService } from '../services/theme.service';
+import { PAGES } from '../../../core/constants';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-sidebar',

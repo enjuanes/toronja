@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Sidebar } from '../../core/sidebar/sidebar';
+import { Sidebar } from '../../core/components/sidebar/sidebar';
 
 @Component({
   selector: 'app-countdown-create',

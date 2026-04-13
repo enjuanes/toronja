@@ -13,6 +13,7 @@ import { Title } from '@angular/platform-browser';
 import Hls from 'hls.js';
 import { Sidebar } from '../../core/components/sidebar/sidebar';
 import { EmojiArtworkService } from '../../core/services/emoji-artwork.service';
+import { FaviconService } from '../../core/services/favicon.service';
 import { RadioService, RadioStation } from '../../core/services/radio.service';
 
 @Component({
@@ -26,6 +27,7 @@ export class Radio implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly titleService = inject(Title);
+  private readonly faviconService = inject(FaviconService);
   private readonly emojiArtwork = inject(EmojiArtworkService);
 
   private readonly addDialog = viewChild<ElementRef<HTMLDialogElement>>('addDialog');
@@ -133,7 +135,8 @@ export class Radio implements OnInit {
       ?.then(() => {
         this.isLoadingStationId.set(null);
         this.playingId.set(station.id!);
-        this.titleService.setTitle(`${station.emoji} ${station.name}`);
+        this.titleService.setTitle(`${station.name}`);
+        this.faviconService.setFavicon(this.emojiArtwork.generateArtworkUrl(station.emoji, 128));
         this.updateMediaSession(station);
       })
       .catch(() => {
@@ -156,6 +159,7 @@ export class Radio implements OnInit {
     this.isLoadingStationId.set(null);
     this.playingId.set(null);
     this.titleService.setTitle('Radio');
+    this.faviconService.resetFavicon();
   }
 
   private updateMediaSession(station: RadioStation): void {

@@ -24,9 +24,10 @@ const BALL_RADIUS = 11;
 const BALL_Y = Math.round(CANVAS_HEIGHT * 0.73); // ~365px from top
 
 // Cambia SPEED_MAX a un valor mayor que SPEED_INIT para aumentar la velocidad progresivamente
-const SPEED_INIT = 0.8;
-const SPEED_MAX = 0.8;
-const BALL_SPEED = 1.0;
+// Valores en píxeles/segundo — independiente de la tasa de frames del dispositivo
+const SPEED_INIT = 48;   // 0.8 px/frame × 60 fps
+const SPEED_MAX = 48;
+const BALL_SPEED = 60;   // 1.0 px/frame × 60 fps
 /** Minimum joystick deflection before registering input (avoids drift) */
 const GAMEPAD_DEADZONE = 0.12;
 /** Maximum pixel deflection before the on-screen touch joystick thumb is clamped */
@@ -284,7 +285,11 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
   private loop(timestamp: number): void {
     if (this.gameState() !== 'playing') return;
 
-    const deltaTime = this.lastFrameTimestamp ? (timestamp - this.lastFrameTimestamp) / 1000 : 0;
+    // Cap deltaTime to 100 ms so a tab that was backgrounded and resumes doesn't
+    // produce a massive jump in scroll position or ball movement.
+    const deltaTime = this.lastFrameTimestamp
+      ? Math.min((timestamp - this.lastFrameTimestamp) / 1000, 0.1)
+      : 0;
     this.lastFrameTimestamp = timestamp;
 
     // Ramp amplitude from 0 → AMPLITUDE_INIT during the warmup window
@@ -293,20 +298,20 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
       this.amplitude = AMPLITUDE_INIT * (this.warmupTimeElapsed / WARMUP_SECS);
     }
 
-    this.scrollOffset += this.speed;
+    this.scrollOffset += this.speed * deltaTime;
 
-    if (this.keysHeld.has('a') || this.keysHeld.has('A')) this.leftBallX -= BALL_SPEED;
-    if (this.keysHeld.has('d') || this.keysHeld.has('D')) this.leftBallX += BALL_SPEED;
-    if (this.keysHeld.has('ArrowLeft')) this.rightBallX -= BALL_SPEED;
-    if (this.keysHeld.has('ArrowRight')) this.rightBallX += BALL_SPEED;
+    if (this.keysHeld.has('a') || this.keysHeld.has('A')) this.leftBallX -= BALL_SPEED * deltaTime;
+    if (this.keysHeld.has('d') || this.keysHeld.has('D')) this.leftBallX += BALL_SPEED * deltaTime;
+    if (this.keysHeld.has('ArrowLeft')) this.rightBallX -= BALL_SPEED * deltaTime;
+    if (this.keysHeld.has('ArrowRight')) this.rightBallX += BALL_SPEED * deltaTime;
 
     // Gamepad: left stick → left ball, right stick → right ball
     const gamepad = this.getActiveGamepad();
     if (gamepad) {
       const leftAxis = gamepad.axes[GAMEPAD_LEFT_STICK_X] ?? 0;
       const rightAxis = gamepad.axes[GAMEPAD_RIGHT_STICK_X] ?? 0;
-      if (Math.abs(leftAxis) > GAMEPAD_DEADZONE) this.leftBallX += leftAxis * BALL_SPEED;
-      if (Math.abs(rightAxis) > GAMEPAD_DEADZONE) this.rightBallX += rightAxis * BALL_SPEED;
+      if (Math.abs(leftAxis) > GAMEPAD_DEADZONE) this.leftBallX += leftAxis * BALL_SPEED * deltaTime;
+      if (Math.abs(rightAxis) > GAMEPAD_DEADZONE) this.rightBallX += rightAxis * BALL_SPEED * deltaTime;
     }
 
     // Touch joystick: apply accumulated finger-delta (canvas-scaled) then reset so
@@ -404,13 +409,13 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
     const ctx = this.ctx;
     ctx.beginPath();
 
-    // Left wall (top → bottom)
+    // Left wall (top → bottom) — step 4 px: halves path complexity, imperceptible on curves
     ctx.moveTo(this.trackCenter(baseX, 0, this.scrollOffset, phases) - TRACK_HALF_WIDTH, 0);
-    for (let y = 2; y <= CANVAS_HEIGHT; y += 2) {
+    for (let y = 4; y <= CANVAS_HEIGHT; y += 4) {
       ctx.lineTo(this.trackCenter(baseX, y, this.scrollOffset, phases) - TRACK_HALF_WIDTH, y);
     }
     // Right wall (bottom → top)
-    for (let y = CANVAS_HEIGHT; y >= 0; y -= 2) {
+    for (let y = CANVAS_HEIGHT; y >= 0; y -= 4) {
       ctx.lineTo(this.trackCenter(baseX, y, this.scrollOffset, phases) + TRACK_HALF_WIDTH, y);
     }
 

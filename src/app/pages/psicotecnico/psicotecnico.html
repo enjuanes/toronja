@@ -95,6 +95,14 @@
               {{ muted() ? 'volume_off' : 'volume_up' }}
             </span>
           </button>
+          <span
+            [attr.aria-label]="gamepadConnected() ? 'Mando detectado' : 'Mando no detectado — pulsa un botón del mando para activarlo'"
+            [title]="gamepadConnected() ? 'Mando detectado' : 'Pulsa un botón del mando para activarlo'"
+            class="flex items-center justify-center rounded-full p-3 transition"
+            [class]="gamepadConnected() ? 'text-green-400' : 'text-gray-600'"
+          >
+            <span class="material-symbols-rounded text-2xl" aria-hidden="true">sports_esports</span>
+          </span>
         </div>
         <p class="text-xs text-gray-500">
           o pulsa

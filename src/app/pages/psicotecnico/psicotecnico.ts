@@ -27,6 +27,13 @@ const BALL_Y = Math.round(CANVAS_HEIGHT * 0.73); // ~365px from top
 const SPEED_INIT = 0.8;
 const SPEED_MAX = 0.8;
 const BALL_SPEED = 1.0;
+/** Minimum joystick deflection before registering input (avoids drift) */
+const GAMEPAD_DEADZONE = 0.12;
+/** Axis indices for a standard gamepad layout */
+const GAMEPAD_LEFT_STICK_X = 0;
+const GAMEPAD_RIGHT_STICK_X = 2;
+/** Button index for A (Xbox) / X (PlayStation) */
+const GAMEPAD_START_BUTTON = 0;
 // Cambia AMPLITUDE_MAX a un valor mayor que AMPLITUDE_INIT para curvas progresivamente más cerradas
 const AMPLITUDE_INIT = 65;
 const AMPLITUDE_MAX = 65;
@@ -59,6 +66,7 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
   protected sidebarOpen = signal(false);
   protected gameState = signal<GameState>('idle');
   protected timeLeft = signal(GAME_SECS);
+  protected gamepadConnected = signal(false);
   /** Accumulated time (seconds) either ball has spent outside its track */
   protected timeOutside = signal(0);
   protected muted = signal(false);
@@ -83,11 +91,30 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
 
   private keysHeld = new Set<string>();
   private lastFrameTimestamp = 0;
+  /** setInterval handle for the lightweight gamepad polling that runs while idle/game_over */
+  private idleGamepadPollingInterval: ReturnType<typeof setInterval> | null = null;
+  /** Index of the connected gamepad in navigator.getGamepads() — set by gamepadconnected event */
+  private connectedGamepadIndex = -1;
+  /** Previous state of the start button — used for rising-edge detection */
+  private previousStartButtonState = false;
 
   /** Created lazily on first user gesture to comply with browser autoplay policy */
   private audioContext: AudioContext | null = null;
   private beepOscillator: OscillatorNode | null = null;
   private beepGainNode: GainNode | null = null;
+
+  private readonly onGamepadConnected = (event: Event) => {
+    this.connectedGamepadIndex = (event as GamepadEvent).gamepad.index;
+    this.previousStartButtonState = false;
+    this.zone.run(() => this.gamepadConnected.set(true));
+  };
+
+  private readonly onGamepadDisconnected = (event: Event) => {
+    if ((event as GamepadEvent).gamepad.index === this.connectedGamepadIndex) {
+      this.connectedGamepadIndex = -1;
+    }
+    this.zone.run(() => this.gamepadConnected.set(navigator.getGamepads().some(Boolean)));
+  };
 
   private readonly onKeydown = (event: KeyboardEvent) => {
     if (['a', 'A', 'd', 'D', 'ArrowLeft', 'ArrowRight', ' ', 'Enter'].includes(event.key)) {
@@ -108,19 +135,26 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
     this.ctx = canvas.getContext('2d')!;
     window.addEventListener('keydown', this.onKeydown);
     window.addEventListener('keyup', this.onKeyup);
+    window.addEventListener('gamepadconnected', this.onGamepadConnected);
+    window.addEventListener('gamepaddisconnected', this.onGamepadDisconnected);
     this.renderFrame();
+    this.startIdleGamepadPolling();
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('keydown', this.onKeydown);
     window.removeEventListener('keyup', this.onKeyup);
+    window.removeEventListener('gamepadconnected', this.onGamepadConnected);
+    window.removeEventListener('gamepaddisconnected', this.onGamepadDisconnected);
     cancelAnimationFrame(this.animationFrameId);
+    this.stopIdleGamepadPolling();
     this.clearTimer();
   }
 
   protected startGame(): void {
     this.clearTimer();
     cancelAnimationFrame(this.animationFrameId);
+    this.stopIdleGamepadPolling();
 
     this.scrollOffset = 0;
     this.speed = SPEED_INIT;
@@ -165,12 +199,47 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
     this.stopBeep();
     this.gameState.set('game_over');
     this.renderFrame();
+    this.startIdleGamepadPolling();
   }
 
   private clearTimer(): void {
     if (this.timerInterval !== null) {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
+    }
+  }
+
+  /** Returns the connected gamepad by stored index, or the first available one */
+  private getActiveGamepad(): Gamepad | null {
+    const gamepads = navigator.getGamepads();
+    if (this.connectedGamepadIndex >= 0) return gamepads[this.connectedGamepadIndex] ?? null;
+    for (const gamepad of gamepads) {
+      if (gamepad) return gamepad;
+    }
+    return null;
+  }
+
+  /**
+   * Polls the start button at ~60 Hz using setInterval with rising-edge detection
+   * so a brief press is never missed. Runs while idle or game_over.
+   */
+  private startIdleGamepadPolling(): void {
+    this.stopIdleGamepadPolling();
+    this.previousStartButtonState = false;
+    this.idleGamepadPollingInterval = setInterval(() => {
+      const gamepad = this.getActiveGamepad();
+      const isPressed = gamepad?.buttons[GAMEPAD_START_BUTTON]?.pressed ?? false;
+      if (isPressed && !this.previousStartButtonState) {
+        this.zone.run(() => this.startGame());
+      }
+      this.previousStartButtonState = isPressed;
+    }, 16);
+  }
+
+  private stopIdleGamepadPolling(): void {
+    if (this.idleGamepadPollingInterval !== null) {
+      clearInterval(this.idleGamepadPollingInterval);
+      this.idleGamepadPollingInterval = null;
     }
   }
 
@@ -192,6 +261,15 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
     if (this.keysHeld.has('d') || this.keysHeld.has('D')) this.leftBallX += BALL_SPEED;
     if (this.keysHeld.has('ArrowLeft')) this.rightBallX -= BALL_SPEED;
     if (this.keysHeld.has('ArrowRight')) this.rightBallX += BALL_SPEED;
+
+    // Gamepad: left stick → left ball, right stick → right ball
+    const gamepad = this.getActiveGamepad();
+    if (gamepad) {
+      const leftAxis = gamepad.axes[GAMEPAD_LEFT_STICK_X] ?? 0;
+      const rightAxis = gamepad.axes[GAMEPAD_RIGHT_STICK_X] ?? 0;
+      if (Math.abs(leftAxis) > GAMEPAD_DEADZONE) this.leftBallX += leftAxis * BALL_SPEED;
+      if (Math.abs(rightAxis) > GAMEPAD_DEADZONE) this.rightBallX += rightAxis * BALL_SPEED;
+    }
 
     // Clamp balls to canvas
     this.leftBallX = Math.max(BALL_RADIUS, Math.min(CANVAS_WIDTH - BALL_RADIUS, this.leftBallX));

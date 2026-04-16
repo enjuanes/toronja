@@ -29,6 +29,8 @@ const SPEED_MAX = 0.8;
 const BALL_SPEED = 1.0;
 /** Minimum joystick deflection before registering input (avoids drift) */
 const GAMEPAD_DEADZONE = 0.12;
+/** Maximum pixel deflection before the on-screen touch joystick thumb is clamped */
+const TOUCH_JOYSTICK_MAX_RADIUS = 64;
 /** Axis indices for a standard gamepad layout */
 const GAMEPAD_LEFT_STICK_X = 0;
 const GAMEPAD_RIGHT_STICK_X = 2;
@@ -70,6 +72,12 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
   /** Accumulated time (seconds) either ball has spent outside its track */
   protected timeOutside = signal(0);
   protected muted = signal(false);
+  /** True when the device supports touch input — set after view init to avoid SSR globals */
+  protected isTouchDevice = signal(false);
+  /** Visual thumb offset (px) for the left on-screen joystick */
+  protected leftThumbOffsetX = signal(0);
+  /** Visual thumb offset (px) for the right on-screen joystick */
+  protected rightThumbOffsetX = signal(0);
 
   private ctx!: CanvasRenderingContext2D;
   private animationFrameId = 0;
@@ -91,6 +99,27 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
 
   private keysHeld = new Set<string>();
   private lastFrameTimestamp = 0;
+  /** Identifier of the active touch on the left joystick pad (null = no touch) */
+  private leftTouchIdentifier: number | null = null;
+  /** Identifier of the active touch on the right joystick pad (null = no touch) */
+  private rightTouchIdentifier: number | null = null;
+  /**
+   * Accumulated canvas-pixel delta for the left joystick since the last frame.
+   * Applied and reset to 0 every RAF tick — no inertia, ball stops when finger stops.
+   */
+  private leftJoystickDeltaX = 0;
+  /** Same as leftJoystickDeltaX but for the right joystick */
+  private rightJoystickDeltaX = 0;
+  /** clientX of the previous touchmove event for the left joystick */
+  private leftJoystickPreviousX = 0;
+  /** clientX of the previous touchmove event for the right joystick */
+  private rightJoystickPreviousX = 0;
+  /**
+   * Ratio of canvas logical width to its displayed CSS width.
+   * Computed on touchstart so finger movement maps 1:1 to canvas pixels.
+   */
+  private touchCanvasScale = 1;
+
   /** setInterval handle for the lightweight gamepad polling that runs while idle/game_over */
   private idleGamepadPollingInterval: ReturnType<typeof setInterval> | null = null;
   /** Index of the connected gamepad in navigator.getGamepads() — set by gamepadconnected event */
@@ -133,6 +162,7 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     const canvas = this.canvasRef().nativeElement;
     this.ctx = canvas.getContext('2d')!;
+    this.isTouchDevice.set('ontouchstart' in window || navigator.maxTouchPoints > 0);
     window.addEventListener('keydown', this.onKeydown);
     window.addEventListener('keyup', this.onKeyup);
     window.addEventListener('gamepadconnected', this.onGamepadConnected);
@@ -165,6 +195,14 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
     this.timeLeft.set(GAME_SECS);
     this.lastFrameTimestamp = 0;
     this.stopBeep();
+
+    // Reset touch joystick state from any previous game
+    this.leftTouchIdentifier = null;
+    this.rightTouchIdentifier = null;
+    this.leftJoystickDeltaX = 0;
+    this.rightJoystickDeltaX = 0;
+    this.leftThumbOffsetX.set(0);
+    this.rightThumbOffsetX.set(0);
 
     // AudioContext must be created after a user gesture (browser autoplay policy)
     this.audioContext ??= new AudioContext();
@@ -270,6 +308,13 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
       if (Math.abs(leftAxis) > GAMEPAD_DEADZONE) this.leftBallX += leftAxis * BALL_SPEED;
       if (Math.abs(rightAxis) > GAMEPAD_DEADZONE) this.rightBallX += rightAxis * BALL_SPEED;
     }
+
+    // Touch joystick: apply accumulated finger-delta (canvas-scaled) then reset so
+    // the ball stops immediately when the finger stops — no inertia.
+    this.leftBallX += this.leftJoystickDeltaX;
+    this.rightBallX += this.rightJoystickDeltaX;
+    this.leftJoystickDeltaX = 0;
+    this.rightJoystickDeltaX = 0;
 
     // Clamp balls to canvas
     this.leftBallX = Math.max(BALL_RADIUS, Math.min(CANVAS_WIDTH - BALL_RADIUS, this.leftBallX));
@@ -410,6 +455,82 @@ export class Psicotecnico implements AfterViewInit, OnDestroy {
       this.rightBallX,
       Math.abs(this.rightBallX - rightTrackCenter) <= TRACK_HALF_WIDTH - BALL_RADIUS
     );
+  }
+
+  protected onLeftJoystickStart(event: TouchEvent): void {
+    event.preventDefault();
+    if (this.leftTouchIdentifier !== null) return;
+    const touch = event.changedTouches[0];
+    this.leftTouchIdentifier = touch.identifier;
+    this.leftJoystickPreviousX = touch.clientX;
+    this.touchCanvasScale =
+      CANVAS_WIDTH / this.canvasRef().nativeElement.getBoundingClientRect().width;
+    this.leftThumbOffsetX.set(0);
+  }
+
+  protected onLeftJoystickMove(event: TouchEvent): void {
+    event.preventDefault();
+    for (const touch of Array.from(event.changedTouches)) {
+      if (touch.identifier === this.leftTouchIdentifier) {
+        const fingerDelta = touch.clientX - this.leftJoystickPreviousX;
+        this.leftJoystickPreviousX = touch.clientX;
+        this.leftJoystickDeltaX += fingerDelta * this.touchCanvasScale;
+        this.leftThumbOffsetX.update((offset) =>
+          Math.max(-TOUCH_JOYSTICK_MAX_RADIUS, Math.min(TOUCH_JOYSTICK_MAX_RADIUS, offset + fingerDelta)),
+        );
+        break;
+      }
+    }
+  }
+
+  protected onLeftJoystickEnd(event: TouchEvent): void {
+    event.preventDefault();
+    for (const touch of Array.from(event.changedTouches)) {
+      if (touch.identifier === this.leftTouchIdentifier) {
+        this.leftTouchIdentifier = null;
+        this.leftJoystickDeltaX = 0;
+        this.leftThumbOffsetX.set(0);
+        break;
+      }
+    }
+  }
+
+  protected onRightJoystickStart(event: TouchEvent): void {
+    event.preventDefault();
+    if (this.rightTouchIdentifier !== null) return;
+    const touch = event.changedTouches[0];
+    this.rightTouchIdentifier = touch.identifier;
+    this.rightJoystickPreviousX = touch.clientX;
+    this.touchCanvasScale =
+      CANVAS_WIDTH / this.canvasRef().nativeElement.getBoundingClientRect().width;
+    this.rightThumbOffsetX.set(0);
+  }
+
+  protected onRightJoystickMove(event: TouchEvent): void {
+    event.preventDefault();
+    for (const touch of Array.from(event.changedTouches)) {
+      if (touch.identifier === this.rightTouchIdentifier) {
+        const fingerDelta = touch.clientX - this.rightJoystickPreviousX;
+        this.rightJoystickPreviousX = touch.clientX;
+        this.rightJoystickDeltaX += fingerDelta * this.touchCanvasScale;
+        this.rightThumbOffsetX.update((offset) =>
+          Math.max(-TOUCH_JOYSTICK_MAX_RADIUS, Math.min(TOUCH_JOYSTICK_MAX_RADIUS, offset + fingerDelta)),
+        );
+        break;
+      }
+    }
+  }
+
+  protected onRightJoystickEnd(event: TouchEvent): void {
+    event.preventDefault();
+    for (const touch of Array.from(event.changedTouches)) {
+      if (touch.identifier === this.rightTouchIdentifier) {
+        this.rightTouchIdentifier = null;
+        this.rightJoystickDeltaX = 0;
+        this.rightThumbOffsetX.set(0);
+        break;
+      }
+    }
   }
 
   protected formatTime(seconds: number): string {

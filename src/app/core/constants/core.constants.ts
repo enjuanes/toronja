@@ -29,6 +29,13 @@ export const PAGES = [
     icon: 'radio',
     code: 'radio',
   },
+  {
+    title: 'Design System',
+    description: 'Colors, typography and components',
+    icon: 'style',
+    code: 'design-system',
+    devOnly: true,
+  },
 ] as const;
 
 export const CHRONOMETER_START_KEY = 'CHRONOMETER_START';

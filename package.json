@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "fetch-municipalities": "node scripts/fetch-aemet-municipalities.mjs",
     "deploy": "pnpm run build && wrangler deploy",
     "preview": "pnpm run build && wrangler dev"
   },

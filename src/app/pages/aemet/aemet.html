@@ -29,7 +29,7 @@
   </button>
 </header>
 
-<main class="overflow-y-auto px-4 pt-6 md:pt-16 lg:pt-32">
+<main class="overflow-y-auto px-4 py-6 md:pt-16 lg:pt-32">
   @if (needsConfig()) {
     <div class="flex h-full flex-col items-center justify-center gap-4 text-center">
       <span class="material-symbols-rounded text-5xl text-gray-400 dark:text-gray-500">
@@ -59,94 +59,71 @@
     <div
       class="mx-auto grid max-w-450 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7"
     >
-      @for (day of days(); track day.fecha) {
+      @for (day of days(); track day.date) {
         <article
           class="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900"
         >
           <div class="flex items-center justify-between">
             <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-              {{ formatDate(day.fecha) }}
+              {{ day.date }}
             </span>
-            <span
-              class="material-symbols-rounded filled text-toronja-500 text-3xl"
-              aria-hidden="true"
-            >
-              {{ getWeatherIcon(day) }}
+            <span class="text-3xl leading-none" [attr.aria-label]="day.skyDescription" role="img">
+              {{ day.emoji }}
             </span>
           </div>
 
-          <p class="text-sm text-gray-600 dark:text-gray-300">
-            {{ getSkyDescription(day) || 'Despejado' }}
-          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-300">{{ day.skyDescription }}</p>
 
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-1" title="Min temperature">
               <span class="material-symbols-rounded text-lg text-blue-500" aria-hidden="true">
                 arrow_downward
               </span>
-              <span class="text-lg font-semibold text-blue-500">
-                {{ day.temperatura.minima }}°
-              </span>
+              <span class="text-lg font-semibold text-blue-500">{{ day.tempMin }}°</span>
             </div>
             <div class="flex items-center gap-1" title="Max temperature">
               <span class="material-symbols-rounded text-lg text-red-500" aria-hidden="true">
                 arrow_upward
               </span>
-              <span class="text-lg font-semibold text-red-500">
-                {{ day.temperatura.maxima }}°
-              </span>
+              <span class="text-lg font-semibold text-red-500">{{ day.tempMax }}°</span>
             </div>
           </div>
 
           <div class="flex flex-wrap gap-3 border-t border-gray-100 pt-3 dark:border-gray-800">
-            @if (getMaxPrecipitation(day); as precip) {
+            @if (day.precipitation) {
               <div
                 class="flex items-center gap-1"
                 title="Precipitation"
-                [attr.aria-label]="precip + '% precipitation'"
+                [attr.aria-label]="day.precipitation + '% precipitation'"
               >
                 <span class="material-symbols-rounded text-base text-blue-400" aria-hidden="true">
                   water_drop
                 </span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">{{ precip }}%</span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ day.precipitation }}%
+                </span>
               </div>
             }
             <div
               class="flex items-center gap-1"
               title="Wind"
-              [attr.aria-label]="getMaxWind(day) + ' km/h wind'"
+              [attr.aria-label]="day.wind + ' km/h wind'"
             >
               <span class="material-symbols-rounded text-base text-gray-400" aria-hidden="true">
                 air
               </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">
-                {{ getMaxWind(day) }} km/h
-              </span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ day.wind }} km/h</span>
             </div>
-            @if (day.uvMax) {
-              <div
-                class="flex items-center gap-1"
-                title="UV Index"
-                [attr.aria-label]="'UV index ' + day.uvMax"
-              >
-                <span class="material-symbols-rounded text-base text-amber-500" aria-hidden="true">
-                  wb_sunny
-                </span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">UV {{ day.uvMax }}</span>
-              </div>
-            }
             <div
               class="flex items-center gap-1"
               title="Humidity"
-              [attr.aria-label]="
-                'Humidity ' + day.humedadRelativa.minima + ' to ' + day.humedadRelativa.maxima + '%'
-              "
+              [attr.aria-label]="'Humidity ' + day.humidityMin + ' to ' + day.humidityMax + '%'"
             >
               <span class="material-symbols-rounded text-base text-cyan-500" aria-hidden="true">
                 humidity_percentage
               </span>
               <span class="text-xs text-gray-500 dark:text-gray-400">
-                {{ day.humedadRelativa.minima }}-{{ day.humedadRelativa.maxima }}%
+                {{ day.humidityMin }}-{{ day.humidityMax }}%
               </span>
             </div>
           </div>
@@ -188,22 +165,58 @@
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label for="aemet-municipality" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-        Municipality ID <span class="text-toronja-500">*</span>
+      <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+        Municipality <span class="text-toronja-500">*</span>
       </label>
-      <input
-        id="aemet-municipality"
-        type="text"
-        formControlName="municipalityId"
-        placeholder="e.g. 50297"
-        class="rounded-lg border border-gray-300 bg-white px-3 py-2 transition focus:border-toronja-500 focus:ring-2 focus:ring-toronja-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800"
-      />
+      @if (selectedMunicipality(); as selected) {
+        <div
+          class="flex items-center justify-between rounded-lg border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-800"
+        >
+          <span class="text-sm">{{ selected.name }}</span>
+          <button
+            type="button"
+            (click)="selectedMunicipality.set(null)"
+            aria-label="Clear selection"
+            class="flex cursor-pointer text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-200"
+          >
+            <span class="material-symbols-rounded text-base" aria-hidden="true">close</span>
+          </button>
+        </div>
+      } @else {
+        <div class="relative">
+          <input
+            #searchInput
+            type="text"
+            placeholder="Search municipality..."
+            [value]="municipalitySearch()"
+            (input)="municipalitySearch.set(searchInput.value)"
+            class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition focus:border-toronja-500 focus:ring-2 focus:ring-toronja-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800"
+          />
+          @if (filteredMunicipalities().length) {
+            <ul
+              class="mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
+            >
+              @for (m of filteredMunicipalities(); track m.id) {
+                <li>
+                  <button
+                    type="button"
+                    (click)="selectMunicipality(m)"
+                    class="w-full cursor-pointer px-3 py-2 text-left text-sm transition hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    {{ m.name }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
     </div>
 
     <button
       type="button"
       (click)="saveConfig()"
-      [disabled]="configForm.invalid"
+      [disabled]="configForm.invalid || !selectedMunicipality()"
       class="bg-toronja-500 hover:bg-toronja-600 disabled:bg-toronja-300 dark:disabled:bg-toronja-800 mt-1 cursor-pointer rounded-lg px-4 py-2.5 font-medium text-white shadow-sm transition disabled:cursor-not-allowed"
     >
       Save

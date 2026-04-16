@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { interval } from 'rxjs';
 import { Sidebar } from '../../core/components/sidebar/sidebar';
-import { CHRONOMETER_PAUSE_KEY, CHRONOMETER_START_KEY } from '../../core/constants';
+import { CHRONOMETER_PAUSE_KEY, CHRONOMETER_START_KEY } from '../../core/constants/core.constants';
 
 @Component({
   selector: 'app-chronometer',

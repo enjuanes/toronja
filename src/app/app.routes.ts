@@ -1,5 +1,6 @@
+import { isDevMode } from '@angular/core';
 import { Routes } from '@angular/router';
-import { DEFAULT_MUNICIPALITY, LS_MUNICIPALITY } from './pages/aemet/aemet';
+import { DEFAULT_SLUG, LS_MUNICIPALITY } from './pages/aemet/aemet';
 import { DEFAULT_COLOR } from './pages/color/color';
 
 export const routes: Routes = [
@@ -42,10 +43,10 @@ export const routes: Routes = [
   },
   {
     path: 'aemet',
-    redirectTo: `aemet/${localStorage.getItem(LS_MUNICIPALITY) || DEFAULT_MUNICIPALITY}`,
+    redirectTo: `aemet/${localStorage.getItem(LS_MUNICIPALITY) || DEFAULT_SLUG}`,
   },
   {
-    path: 'aemet/:municipalityId',
+    path: 'aemet/:slug',
     loadComponent: () => import('./pages/aemet/aemet').then((m) => m.Aemet),
     title: 'Aemet',
   },
@@ -53,5 +54,12 @@ export const routes: Routes = [
     path: 'radio',
     loadComponent: () => import('./pages/radio/radio').then((m) => m.Radio),
     title: 'Radio',
+  },
+  {
+    path: 'design-system',
+    canMatch: [() => isDevMode()],
+    loadComponent: () =>
+      import('./pages/design-system/design-system').then((m) => m.DesignSystem),
+    title: 'Design System',
   },
 ];

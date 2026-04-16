@@ -54,4 +54,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/radio/radio').then((m) => m.Radio),
     title: 'Radio',
   },
+  {
+    path: 'psicotecnico',
+    loadComponent: () =>
+      import('./pages/psicotecnico/psicotecnico').then((m) => m.Psicotecnico),
+    title: 'Psicotécnico',
+  },
 ];

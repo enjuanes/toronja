@@ -1,0 +1,147 @@
+<app-sidebar [(open)]="sidebarOpen" />
+
+<header class="fixed top-0 left-0 right-0 z-10 flex items-center justify-between px-4 py-3">
+  <div class="flex items-center gap-3">
+    <button
+      type="button"
+      (click)="sidebarOpen.set(true)"
+      aria-label="Abrir menú"
+      class="flex cursor-pointer rounded-lg p-1 text-gray-600 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+    </button>
+    <h1 class="text-xl font-bold">Psicotécnico</h1>
+  </div>
+
+  @if (gameState() === 'playing') {
+    <div class="flex items-center gap-6 pr-2" aria-live="polite" aria-atomic="true">
+      <div class="text-center">
+        <div class="text-xs text-gray-500 dark:text-gray-400">Tiempo</div>
+        <div class="font-mono text-lg font-bold tabular-nums">{{ formatTime(timeLeft()) }}</div>
+      </div>
+      <div class="text-center">
+        <div class="text-xs text-gray-500 dark:text-gray-400">Fuera</div>
+        <div class="font-mono text-lg font-bold tabular-nums text-red-500">{{ formatTimeOutside(timeOutside()) }}</div>
+      </div>
+    </div>
+  }
+</header>
+
+<main class="flex h-dvh flex-col items-center justify-center bg-gray-950 pt-14">
+  <div class="relative w-full max-w-4xl px-2">
+    <canvas
+      #gameCanvas
+      width="800"
+      height="500"
+      class="block w-full rounded-lg shadow-2xl"
+      style="aspect-ratio: 800 / 500"
+      aria-label="Juego psicotécnico de conducción: dos pistas con curvas"
+      role="img"
+    ></canvas>
+
+    @if (gameState() === 'idle') {
+      <div
+        class="absolute inset-0 flex flex-col items-center justify-center gap-5 rounded-lg bg-black/65 text-white backdrop-blur-sm"
+      >
+        <h2 class="text-3xl font-bold tracking-tight">Psicotécnico</h2>
+        <p class="max-w-xs text-center text-sm text-gray-300">
+          Mantén las dos bolitas dentro de las pistas durante
+          <strong class="text-white">3 minutos</strong>.
+        </p>
+
+        <div class="flex flex-col gap-2 rounded-xl bg-white/10 px-6 py-4 text-sm">
+          <div class="flex items-center gap-3">
+            <div class="flex gap-1">
+              <kbd class="min-w-8 rounded bg-gray-700 px-2 py-1 text-center font-mono text-xs"
+                >A</kbd
+              >
+              <kbd class="min-w-8 rounded bg-gray-700 px-2 py-1 text-center font-mono text-xs"
+                >D</kbd
+              >
+            </div>
+            <span class="text-gray-300">Pista izquierda</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex gap-1">
+              <kbd class="min-w-8 rounded bg-gray-700 px-2 py-1 text-center font-mono text-xs"
+                >←</kbd
+              >
+              <kbd class="min-w-8 rounded bg-gray-700 px-2 py-1 text-center font-mono text-xs"
+                >→</kbd
+              >
+            </div>
+            <span class="text-gray-300">Pista derecha</span>
+          </div>
+        </div>
+
+        <div class="mt-1 flex items-center gap-3">
+          <button
+            type="button"
+            (click)="startGame()"
+            class="bg-toronja-500 hover:bg-toronja-600 cursor-pointer rounded-full px-8 py-3 font-semibold text-white shadow-lg transition active:scale-95"
+          >
+            Comenzar
+          </button>
+          <button
+            type="button"
+            (click)="muted.set(!muted())"
+            [attr.aria-label]="muted() ? 'Activar sonido' : 'Silenciar'"
+            [attr.aria-pressed]="muted()"
+            class="flex cursor-pointer items-center justify-center rounded-full p-3 text-gray-300 transition hover:bg-white/10 active:scale-95"
+          >
+            <span class="material-symbols-rounded text-2xl" aria-hidden="true">
+              {{ muted() ? 'volume_off' : 'volume_up' }}
+            </span>
+          </button>
+        </div>
+        <p class="text-xs text-gray-500">
+          o pulsa
+          <kbd class="rounded bg-gray-700 px-1.5 py-0.5 font-mono text-xs text-gray-300"
+            >Espacio</kbd
+          >
+        </p>
+      </div>
+    }
+
+    @if (gameState() === 'game_over') {
+      <div
+        class="absolute inset-0 flex flex-col items-center justify-center gap-5 rounded-lg bg-black/70 text-white backdrop-blur-sm"
+      >
+        <h2 class="text-3xl font-bold tracking-tight">Fin del test</h2>
+
+        <div class="flex gap-10 text-center">
+          <div>
+            <div class="text-5xl font-bold text-toronja-500">{{ formatTimeOutside(timeOutside()) }}</div>
+            <div class="mt-1 text-sm text-gray-400">Tiempo fuera</div>
+          </div>
+          <div>
+            <div class="text-5xl font-bold" [class]="getResultColor()">{{ getResultLabel() }}</div>
+            <div class="mt-1 text-sm text-gray-400">Resultado</div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          (click)="startGame()"
+          class="bg-toronja-500 hover:bg-toronja-600 mt-1 cursor-pointer rounded-full px-8 py-3 font-semibold text-white shadow-lg transition active:scale-95"
+        >
+          Repetir
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (gameState() !== 'playing') {
+    <div class="mt-4 flex gap-5 text-xs text-gray-600 dark:text-gray-500">
+      <div class="flex items-center gap-1.5">
+        <span class="inline-block size-3 rounded-full bg-white" aria-hidden="true"></span>
+        Bolita en pista
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="inline-block size-3 rounded-full bg-orange-500" aria-hidden="true"></span>
+        Bolita fuera
+      </div>
+    </div>
+  }
+</main>
+

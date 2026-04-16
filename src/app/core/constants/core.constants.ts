@@ -29,6 +29,12 @@ export const PAGES = [
     icon: 'radio',
     code: 'radio',
   },
+  {
+    title: 'Psicotécnico',
+    description: 'Test de coordinación visomotora',
+    icon: 'sports_score',
+    code: 'psicotecnico',
+  },
 ] as const;
 
 export const CHRONOMETER_START_KEY = 'CHRONOMETER_START';

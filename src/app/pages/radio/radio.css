@@ -1,0 +1,28 @@
+@keyframes eq-bar {
+  0%,
+  100% {
+    transform: scaleY(0.2);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.eq-bar-1 {
+  animation: eq-bar 0.9s ease-in-out infinite;
+}
+.eq-bar-2 {
+  animation: eq-bar 0.9s ease-in-out infinite 0.3s;
+}
+.eq-bar-3 {
+  animation: eq-bar 0.9s ease-in-out infinite 0.15s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-bar-1,
+  .eq-bar-2,
+  .eq-bar-3 {
+    animation: none;
+    transform: scaleY(0.6);
+  }
+}

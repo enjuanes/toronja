@@ -1,4 +1,3 @@
-import { isDevMode } from '@angular/core';
 import { Routes } from '@angular/router';
 import { DEFAULT_SLUG, LS_MUNICIPALITY } from './pages/aemet/aemet';
 import { DEFAULT_COLOR } from './pages/color/color';
@@ -54,12 +53,5 @@ export const routes: Routes = [
     path: 'radio',
     loadComponent: () => import('./pages/radio/radio').then((m) => m.Radio),
     title: 'Radio',
-  },
-  {
-    path: 'design-system',
-    canMatch: [() => isDevMode()],
-    loadComponent: () =>
-      import('./pages/design-system/design-system').then((m) => m.DesignSystem),
-    title: 'Design System',
   },
 ];

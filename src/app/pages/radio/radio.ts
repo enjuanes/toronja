@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   ElementRef,
   inject,
@@ -20,6 +21,7 @@ import { RadioService, RadioStation } from '../../core/services/radio.service';
   selector: 'app-radio',
   imports: [Sidebar, ReactiveFormsModule],
   templateUrl: './radio.html',
+  styleUrl: './radio.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Radio implements OnInit {
@@ -39,6 +41,19 @@ export class Radio implements OnInit {
   protected readonly playingId = signal<number | null>(null);
   protected isLoadingStationId = signal<number | null>(null);
   protected isDeleteMode = signal(false);
+  protected readonly volume = signal(1);
+  protected readonly muted = signal(false);
+  protected readonly isDesktop = signal(false);
+  protected readonly playingStation = computed(() =>
+    this.stations().find((s) => s.id === this.playingId()) ?? null,
+  );
+  protected readonly volumeIcon = computed(() => {
+    if (this.muted()) return 'volume_off';
+    const v = this.volume();
+    if (v === 0) return 'volume_mute';
+    if (v < 0.5) return 'volume_down';
+    return 'volume_up';
+  });
 
   protected readonly addForm = this.fb.group({
     emoji: [''],
@@ -48,6 +63,12 @@ export class Radio implements OnInit {
 
   constructor() {
     this.destroyRef.onDestroy(() => this.stopPlayback());
+
+    const query = window.matchMedia('(pointer: fine) and (hover: hover)');
+    this.isDesktop.set(query.matches);
+    const handler = (e: MediaQueryListEvent) => this.isDesktop.set(e.matches);
+    query.addEventListener('change', handler);
+    this.destroyRef.onDestroy(() => query.removeEventListener('change', handler));
   }
 
   async ngOnInit(): Promise<void> {
@@ -105,6 +126,7 @@ export class Radio implements OnInit {
     this.stopPlayback();
 
     this.audioElement = document.createElement('video');
+    this.audioElement.volume = this.muted() ? 0 : this.volume();
 
     // set station name in video element
     this.audioElement.setAttribute('title', station.name + 'asdasd');
@@ -143,6 +165,24 @@ export class Radio implements OnInit {
         this.stopPlayback();
         alert('Failed to play the station. Please check the URL or try another station.');
       });
+  }
+
+  protected toggleMute(): void {
+    const newMuted = !this.muted();
+    this.muted.set(newMuted);
+    if (this.audioElement) this.audioElement.volume = newMuted ? 0 : this.volume();
+  }
+
+  protected setVolume(value: number): void {
+    this.volume.set(value);
+    this.muted.set(false);
+    if (this.audioElement) this.audioElement.volume = value;
+  }
+
+  protected onVolumeWheel(event: WheelEvent): void {
+    event.preventDefault();
+    const delta = event.deltaY < 0 ? 0.05 : -0.05;
+    this.setVolume(Math.min(1, Math.max(0, this.volume() + delta)));
   }
 
   protected stopPlayback(): void {

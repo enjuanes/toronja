@@ -50,7 +50,9 @@
 
 <main>
   <section
-    class="mx-auto max-w-450 grid grid-cols-1 gap-4 pt-6 pb-24 md:pt-16 lg:pt-32 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:pb-14"
+    class="mx-auto max-w-450 grid grid-cols-1 gap-4 px-4 pt-6 pb-24 sm:grid-cols-2 md:pt-16 lg:grid-cols-3 lg:pt-32 xl:grid-cols-4"
+    [class.lg:pb-28]="playingStation() && isDesktop()"
+    [class.lg:pb-14]="!(playingStation() && isDesktop())"
   >
     @for (station of stations(); track station.id) {
       @if (isDeleteMode()) {
@@ -79,11 +81,11 @@
           class="flex cursor-pointer items-center gap-4 rounded-2xl border bg-white/60 p-4 text-left shadow-sm backdrop-blur-md transition-all hover:bg-gray-100/60 dark:bg-white/5 dark:hover:bg-white/10"
           [class]="
             playingId() === station.id
-              ? 'border-toronja-300 dark:border-toronja-500 shadow-lg radio-playing'
+              ? 'border-toronja-500'
               : 'border-gray-200 dark:border-gray-700'
           "
         >
-          <span class="text-3xl" [class.rainbow]="playingId() === station.id" aria-hidden="true">{{
+          <span class="text-3xl" aria-hidden="true">{{
             station.emoji
           }}</span>
           <div class="min-w-0 flex-1">
@@ -94,10 +96,10 @@
               progress_activity
             </span>
           } @else if (playingId() === station.id) {
-            <div class="flex items-end gap-[3px]" aria-label="Reproduciendo" role="img">
-              <span class="eq-bar-1 block h-4 w-[3px] origin-bottom rounded-sm bg-toronja-500"></span>
-              <span class="eq-bar-2 block h-4 w-[3px] origin-bottom rounded-sm bg-toronja-500"></span>
-              <span class="eq-bar-3 block h-4 w-[3px] origin-bottom rounded-sm bg-toronja-500"></span>
+            <div class="flex items-end gap-0.75" aria-label="Reproduciendo" role="img">
+              <span class="eq-bar-1 block h-4 w-0.75 origin-bottom rounded-sm bg-toronja-500"></span>
+              <span class="eq-bar-2 block h-4 w-0.75 origin-bottom rounded-sm bg-toronja-500"></span>
+              <span class="eq-bar-3 block h-4 w-0.75 origin-bottom rounded-sm bg-toronja-500"></span>
             </div>
           } @else {
             <span class="material-symbols-rounded filled text-toronja-500" aria-hidden="true">
@@ -129,6 +131,52 @@
     >Fallout.FM</a
   >. You can find more stations there.
 </footer>
+
+@if (playingStation() && isDesktop()) {
+  <div
+    class="fixed bottom-0 left-0 right-0 z-20 flex items-center gap-4 border-t border-gray-200 bg-white/90 px-6 py-3 backdrop-blur-md dark:border-gray-700 dark:bg-gray-900/90"
+    role="region"
+    aria-label="Now playing"
+  >
+    <span class="text-2xl" aria-hidden="true">{{ playingStation()!.emoji }}</span>
+    <p class="min-w-0 flex-1 truncate font-semibold">{{ playingStation()!.name }}</p>
+
+    <div
+      class="flex items-center gap-2"
+      role="group"
+      aria-label="Volume control"
+      (wheel)="onVolumeWheel($event)"
+    >
+      <button
+        type="button"
+        (click)="toggleMute()"
+        [attr.aria-label]="muted() ? 'Unmute' : 'Mute'"
+        class="flex cursor-pointer rounded p-0.5 text-gray-500 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">{{ volumeIcon() }}</span>
+      </button>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        [value]="volume()"
+        (input)="setVolume(+$any($event.target).value)"
+        aria-label="Volume"
+        class="w-32 cursor-pointer accent-toronja-500"
+      />
+    </div>
+
+    <button
+      type="button"
+      (click)="stopPlayback()"
+      aria-label="Stop playback"
+      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+    >
+      <span class="material-symbols-rounded filled" aria-hidden="true">stop</span>
+    </button>
+  </div>
+}
 
 <dialog
   #addDialog

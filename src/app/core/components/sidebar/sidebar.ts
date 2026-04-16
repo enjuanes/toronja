@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, isDevMode, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, model } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { PAGES } from '../../constants/core.constants';
 import { ThemeService } from '../../services/theme.service';
@@ -11,7 +11,7 @@ import { ThemeService } from '../../services/theme.service';
 })
 export class Sidebar {
   open = model(false);
-  protected readonly pages = PAGES.filter((page) => !('devOnly' in page && page.devOnly) || isDevMode());
+  protected readonly pages = PAGES;
   protected readonly themeService = inject(ThemeService);
 
   close(): void {

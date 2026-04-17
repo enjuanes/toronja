@@ -6,6 +6,8 @@ const THEME_KEY = 'theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
+  private readonly mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
   private readonly theme = signal<Theme>(this.getStoredTheme());
 
   readonly current = this.theme.asReadonly();
@@ -30,6 +32,12 @@ export class ThemeService {
 
   constructor() {
     this.applyTheme(this.theme());
+
+    this.mediaQuery.addEventListener('change', () => {
+      if (this.theme() === 'system') {
+        this.applyTheme('system');
+      }
+    });
   }
 
   cycle(): void {
@@ -41,18 +49,30 @@ export class ThemeService {
 
   private getStoredTheme(): Theme {
     const stored = localStorage.getItem(THEME_KEY);
-    if (stored === 'light' || stored === 'dark') return stored;
+    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+      return stored;
+    }
     return 'system';
   }
 
   private applyTheme(theme: Theme): void {
+    const root = document.documentElement;
+
     if (theme === 'system') {
       localStorage.removeItem(THEME_KEY);
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.classList.toggle('dark', prefersDark);
-    } else {
-      localStorage.setItem(THEME_KEY, theme);
-      document.documentElement.classList.toggle('dark', theme === 'dark');
+
+      const prefersDark = this.mediaQuery.matches;
+      root.classList.toggle('dark', prefersDark);
+
+      // opcional pero recomendable
+      root.style.colorScheme = prefersDark ? 'dark' : 'light';
+      return;
     }
+
+    localStorage.setItem(THEME_KEY, theme);
+    root.classList.toggle('dark', theme === 'dark');
+
+    // opcional pero recomendable
+    root.style.colorScheme = theme;
   }
 }

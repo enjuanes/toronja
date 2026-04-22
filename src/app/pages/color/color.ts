@@ -50,6 +50,8 @@ export class Color {
     picker: [''],
   });
 
+  protected readonly isFullscreen = signal(false);
+
   protected readonly isLight = computed(() => {
     const hex = this.color();
     if (hex.length !== 6) return false;
@@ -58,8 +60,6 @@ export class Color {
     const b = parseInt(hex.substring(4, 6), 16);
     return (r + g + b) / 3 > 127.5;
   });
-
-  protected readonly iconColor = computed(() => (this.isLight() ? 'text-black' : 'text-white'));
 
   constructor() {
     this.route.params.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
@@ -80,6 +80,8 @@ export class Color {
 
     effect(() => {
       this.titleService.setTitle(this.colorService.getColorName(this.color()));
+      const meta = this.document.querySelector('meta[name="theme-color"]');
+      meta!.setAttribute('content', `#${this.color()}`);
     });
 
     this.hideSubject.pipe(debounceTime(3000), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -145,8 +147,10 @@ export class Color {
   protected toggleFullscreen(): void {
     if (!this.document.fullscreenElement) {
       this.document.documentElement.requestFullscreen();
+      this.isFullscreen.set(true);
     } else {
       this.document.exitFullscreen();
+      this.isFullscreen.set(false);
     }
   }
 

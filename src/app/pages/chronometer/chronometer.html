@@ -6,16 +6,16 @@
       type="button"
       (click)="sidebarOpen.set(true)"
       aria-label="Open menu"
-      class="flex cursor-pointer rounded-lg p-1 text-gray-600 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+      class="neo-button flex cursor-pointer rounded-md bg-neutral-50 p-1 dark:bg-neutral-900"
     >
       <span class="material-symbols-rounded" aria-hidden="true">menu</span>
     </button>
-    <h1 class="text-xl font-bold">Chronometer</h1>
+    <h1 class="text-xl font-semibold">Chronometer</h1>
   </div>
 </header>
 
-<main class="flex flex-col h-dvh items-center justify-center gap-8">
-  <span class="font-mono text-7xl font-light tabular-nums sm:text-8xl">
+<main class="flex h-dvh flex-col items-center justify-center gap-8">
+  <span class="text-7xl tabular-nums sm:text-8xl">
     {{ display() }}
   </span>
 
@@ -25,18 +25,20 @@
         type="button"
         (click)="pause()"
         aria-label="Pause"
-        class="bg-toronja-500 hover:bg-toronja-600 flex size-14 cursor-pointer items-center justify-center rounded-full text-white shadow-lg transition active:scale-95"
+        class="neo-button bg-tornja-500 flex rounded-lg bg-amber-500 p-2 text-white"
       >
-        <span class="material-symbols-rounded filled text-3xl" aria-hidden="true">pause</span>
+        <span class="material-symbols-rounded filled text-3xl leading-none" aria-hidden="true"
+          >pause</span
+        >
       </button>
     } @else {
       <button
         type="button"
         (click)="start()"
         aria-label="Start"
-        class="bg-toronja-500 hover:bg-toronja-600 flex size-14 cursor-pointer items-center justify-center rounded-full text-white shadow-lg transition active:scale-95"
+        class="neo-button flex rounded-lg bg-green-500 p-2 text-white"
       >
-        <span class="material-symbols-rounded filled text-3xl" aria-hidden="true">
+        <span class="material-symbols-rounded filled text-3xl leading-none" aria-hidden="true">
           play_arrow
         </span>
       </button>
@@ -47,9 +49,11 @@
         type="button"
         (click)="stop()"
         aria-label="Stop"
-        class="flex size-14 cursor-pointer items-center justify-center rounded-full bg-gray-200 text-gray-700 shadow-lg transition hover:bg-gray-300 active:scale-95 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+        class="neo-button flex rounded-lg bg-red-500 p-2 text-white"
       >
-        <span class="material-symbols-rounded filled text-3xl" aria-hidden="true">stop</span>
+        <span class="material-symbols-rounded filled text-3xl leading-none" aria-hidden="true"
+          >stop</span
+        >
       </button>
     }
   </div>

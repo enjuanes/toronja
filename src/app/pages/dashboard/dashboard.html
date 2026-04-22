@@ -1,14 +1,17 @@
 <header
-  class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-900"
+  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 dark:bg-neutral-900"
 >
-  <h1 class="text-toronja-500 text-xl font-bold">
-    <span class="text-2xl me-1 segoe-emoji">🍊</span>Toronja
-  </h1>
+  <a
+    class="text-toronja-500 border-r-2 border-neutral-900 py-4 pe-4 text-xl font-semibold dark:border-white"
+    routerLink="/"
+  >
+    <span class="segoe-emoji me-1 text-2xl">🍊</span>Toronja
+  </a>
   <button
     type="button"
     (click)="themeService.cycle()"
     [attr.aria-label]="'Theme: ' + themeService.current()"
-    class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 cursor-pointer rounded-lg p-2 transition"
+    class="neo-button flex rounded-md bg-amber-300 p-2 transition dark:bg-blue-900"
   >
     <span class="material-symbols-rounded" aria-hidden="true">
       {{ themeService.icon() }}
@@ -17,15 +20,16 @@
 </header>
 
 <section
-  class="mx-auto grid max-w-7xl grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 pt-6 md:pt-16 lg:pt-32"
+  class="mx-auto grid max-w-7xl grid-cols-1 gap-4 p-4 pt-6 sm:grid-cols-2 md:pt-16 lg:grid-cols-3 lg:pt-32 xl:grid-cols-4"
 >
   @for (page of pages; track page.code) {
     <a
       [routerLink]="page.code"
-      class="group flex flex-col items-start gap-4 rounded-2xl border border-white/20 bg-white/60 p-6 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-toronja-300/40 hover:shadow-xl dark:border-white/10 dark:bg-white/5 dark:hover:border-toronja-500/30"
+      class="neo-card flex flex-col items-start gap-4 rounded-2xl bg-neutral-50 p-6 dark:bg-neutral-900"
     >
       <span
-        class="material-symbols-rounded filled text-toronja-500 text-4xl transition-transform duration-300 group-hover:scale-150"
+        class="material-symbols-rounded filled rounded-lg p-2 text-3xl leading-none transition-transform duration-300"
+        [class]="page.cardBackground"
         aria-hidden="true"
       >
         {{ page.icon }}
@@ -34,14 +38,11 @@
         <h2 class="text-lg font-semibold">
           {{ page.title }}
         </h2>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <p class="mt-1 text-sm">
           {{ page.description }}
         </p>
       </div>
-      <span
-        class="material-symbols-rounded group-hover:text-toronja-500 mt-auto self-end text-gray-300 transition-all duration-300 group-hover:translate-x-1 dark:text-gray-600"
-        aria-hidden="true"
-      >
+      <span class="material-symbols-rounded mt-auto self-end" aria-hidden="true">
         arrow_forward
       </span>
     </a>

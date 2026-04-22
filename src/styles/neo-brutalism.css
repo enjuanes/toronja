@@ -1,0 +1,162 @@
+:root,
+.force-light {
+  --neo-shadow-color: var(--color-neutral-900);
+  --neo-border-color: var(--color-neutral-900);
+
+  /* Neo Card */
+  --neo-card-border: 3px solid var(--neo-border-color);
+  --neo-card-inner-shadow-color: color-mix(in oklab, var(--color-black) 10%, transparent);
+  --neo-card-shadow:
+    6px 6px 0 var(--neo-shadow-color), inset 0 -4px var(--neo-card-inner-shadow-color);
+  --neo-card-shadow-hover:
+    4px 4px 0 var(--neo-shadow-color), inset 0 -4px var(--neo-card-inner-shadow-color);
+  --neo-card-shadow-active:
+    0px 0px 0 var(--neo-shadow-color), inset 0 -4px var(--neo-card-inner-shadow-color);
+  --neo-card-transform-hover: translate(2px, 2px);
+  --neo-card-transform-active: translate(4px, 4px);
+
+  /* Neo Button */
+  --neo-button-border: 2px solid var(--neo-border-color);
+  --neo-button-shadow: 3px 3px 0 var(--neo-shadow-color);
+  --neo-button-shadow-hover: 1px 1px 0 var(--neo-shadow-color);
+  --neo-button-shadow-active: 0px 0px 0 var(--neo-shadow-color);
+  --neo-button-transform-hover: translate(1px, 1px);
+  --neo-button-transform-active: translate(3px, 3px);
+
+  /* Neo Slider */
+  --neo-slider-track-color: var(--color-blue-300);
+  --neo-slider-background-color: var(--color-neutral-50);
+  --neo-slider-border-color: var(--color-neutral-900);
+}
+
+html.dark,
+.force-dark {
+  --neo-shadow-color: var(--color-neutral-500);
+  --neo-border-color: var(--color-white);
+
+  --neo-card-inner-shadow-color: color-mix(in oklab, var(--color-white) 30%, transparent);
+
+  --neo-slider-background-color: var(--color-neutral-900);
+  --neo-slider-border-color: var(--color-white);
+  --neo-slider-track-color: var(--color-blue-500);
+}
+
+.static-neo-card {
+  border: var(--neo-card-border);
+  box-shadow: var(--neo-card-shadow);
+}
+
+.neo-card {
+  border: var(--neo-card-border);
+  box-shadow: var(--neo-card-shadow);
+  transition: all 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    box-shadow: var(--neo-card-shadow-hover);
+    transform: var(--neo-card-transform-hover);
+    outline: none;
+  }
+
+  &:active {
+    box-shadow: var(--neo-card-shadow-active);
+    transform: var(--neo-card-transform-active);
+  }
+}
+
+.neo-card-pressed {
+  border: var(--neo-card-border);
+  box-shadow:
+    0px 0px 0 var(--neo-shadow-color),
+    inset 0 -4px var(--neo-card-inner-shadow-color);
+  transform: var(--neo-card-transform-active);
+  transition: all 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    box-shadow:
+      2px 2px 0 var(--neo-shadow-color),
+      inset 0 -4px var(--neo-card-inner-shadow-color);
+    transform: var(--neo-card-transform-hover);
+    outline: none;
+  }
+
+  &:active {
+    box-shadow:
+      4px 4px 0 var(--neo-shadow-color),
+      inset 0 -4px var(--neo-card-inner-shadow-color);
+    transform: none;
+  }
+}
+
+.neo-button {
+  cursor: pointer;
+  border: var(--neo-button-border);
+  box-shadow: var(--neo-button-shadow);
+  transition: all 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    box-shadow: var(--neo-button-shadow-hover);
+    transform: var(--neo-button-transform-hover);
+    outline: none;
+  }
+
+  &:active {
+    box-shadow: var(--neo-button-shadow-active);
+    transform: var(--neo-button-transform-active);
+  }
+}
+
+.neo-button-pressed {
+  cursor: pointer;
+  border: var(--neo-button-border);
+  box-shadow: 0px 0px 0 var(--neo-shadow-color);
+  transform: translate(4px, 4px);
+  transition: all 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    box-shadow: 2px 2px 0 var(--neo-shadow-color);
+    transform: var(--neo-button-transform-hover);
+    outline: none;
+  }
+
+  &:active {
+    box-shadow: 4px 4px 0 var(--neo-shadow-color);
+    transform: none;
+  }
+}
+
+.neo-slider {
+  appearance: none;
+  height: 14px;
+  border: 2px solid var(--neo-slider-border-color);
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: var(--neo-slider-background-color);
+}
+
+.neo-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--neo-slider-border-color);
+  box-shadow:
+    6px 0px 0px 0px var(--neo-slider-background-color),
+    -99px 0px 0px 99px var(--neo-slider-track-color);
+  background-color: var(--neo-slider-background-color);
+  border-radius: 50%;
+}
+
+.neo-slider::-moz-range-thumb {
+  appearance: none;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--neo-slider-border-color);
+  box-shadow:
+    6px 0px 0px 0px var(--neo-slider-background-color),
+    -99px 0px 0px 99px var(--neo-slider-track-color);
+  background-color: var(--neo-slider-background-color);
+  border-radius: 50%;
+}

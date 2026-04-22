@@ -52,6 +52,7 @@ export class Aemet {
 
   protected sidebarOpen = signal(false);
   protected readonly days = signal<WeatherDay[]>([]);
+  protected readonly today = computed(() => this.days()[0] ?? null);
   protected readonly cityName = signal('');
   protected readonly loading = signal(false);
   protected readonly error = signal(false);

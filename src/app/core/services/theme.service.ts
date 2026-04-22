@@ -4,6 +4,8 @@ export type Theme = 'light' | 'dark' | 'system';
 
 const THEME_KEY = 'theme';
 
+const defaultTheme: Theme = 'light';
+
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -52,27 +54,26 @@ export class ThemeService {
     if (stored === 'light' || stored === 'dark' || stored === 'system') {
       return stored;
     }
-    return 'system';
+    return defaultTheme;
   }
 
   private applyTheme(theme: Theme): void {
     const root = document.documentElement;
 
-    if (theme === 'system') {
+    if (theme === defaultTheme) {
       localStorage.removeItem(THEME_KEY);
+    } else {
+      localStorage.setItem(THEME_KEY, theme);
+    }
 
+    if (theme === 'system') {
       const prefersDark = this.mediaQuery.matches;
       root.classList.toggle('dark', prefersDark);
 
-      // opcional pero recomendable
       root.style.colorScheme = prefersDark ? 'dark' : 'light';
-      return;
+    } else {
+      root.classList.toggle('dark', theme === 'dark');
+      root.style.colorScheme = theme;
     }
-
-    localStorage.setItem(THEME_KEY, theme);
-    root.classList.toggle('dark', theme === 'dark');
-
-    // opcional pero recomendable
-    root.style.colorScheme = theme;
   }
 }

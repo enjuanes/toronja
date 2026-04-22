@@ -1,7 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block')
+layer(google-icons);
 @import 'tailwindcss';
+@import './neo-brutalism.css';
 
 @font-face {
   font-family: 'Segoe UI Emoji';
@@ -12,7 +15,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Roboto', sans-serif;
+  --font-sans: 'Fredoka', sans-serif;
+  --font-mono: 'Space Mono', monospace;
   --color-toronja-50: #fff7ed;
   --color-toronja-100: #ffedd5;
   --color-toronja-200: #fdd6a9;
@@ -50,4 +54,3 @@
 dialog {
   color: inherit;
 }
-

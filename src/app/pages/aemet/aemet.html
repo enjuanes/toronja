@@ -1,29 +1,31 @@
 <app-sidebar [(open)]="sidebarOpen" />
 
 <header
-  class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-900"
+  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:bg-neutral-900"
 >
   <div class="flex items-center gap-3">
     <button
       type="button"
       (click)="sidebarOpen.set(true)"
       aria-label="Open menu"
-      class="flex cursor-pointer rounded-lg p-1 text-gray-600 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+      class="neo-button flex rounded-md p-1"
     >
       <span class="material-symbols-rounded" aria-hidden="true">menu</span>
     </button>
-    <div>
-      <h1 class="text-xl font-bold">Aemet</h1>
-      @if (cityName()) {
-        <p class="text-xs text-gray-500 dark:text-gray-400">{{ cityName() }}</p>
+    <div class="flex items-center gap-1">
+      @if (today(); as today) {
+        <span class="text-2xl leading-none" [attr.aria-label]="today.skyDescription" role="img">{{
+          today.emoji
+        }}</span>
       }
+      <h1 class="text-xl font-semibold">{{ cityName() ? cityName() : 'Aemet' }}</h1>
     </div>
   </div>
   <button
     type="button"
     (click)="openConfig()"
     aria-label="Settings"
-    class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+    class="neo-button bg-toronja-500 flex rounded-md p-1 text-white"
   >
     <span class="material-symbols-rounded" aria-hidden="true">settings</span>
   </button>
@@ -32,28 +34,24 @@
 <main class="overflow-y-auto px-4 py-6 md:pt-16 lg:pt-32">
   @if (needsConfig()) {
     <div class="flex h-full flex-col items-center justify-center gap-4 text-center">
-      <span class="material-symbols-rounded text-5xl text-gray-400 dark:text-gray-500">
-        vpn_key
-      </span>
-      <p class="text-lg text-gray-500 dark:text-gray-400">API key required</p>
+      <span class="material-symbols-rounded text-5xl"> vpn_key </span>
+      <p class="text-lg">API key required</p>
       <button
         type="button"
         (click)="openConfig()"
-        class="bg-toronja-500 hover:bg-toronja-600 cursor-pointer rounded-lg px-5 py-2.5 font-medium text-white shadow-sm transition"
+        class="neo-button bg-toronja-500 rounded-lg px-4 py-2 text-white"
       >
         Configure
       </button>
     </div>
   } @else if (loading()) {
     <div class="flex h-full items-center justify-center">
-      <span class="material-symbols-rounded text-toronja-500 animate-spin text-4xl">
-        progress_activity
-      </span>
+      <span class="material-symbols-rounded animate-spin text-4xl"> progress_activity </span>
     </div>
   } @else if (error()) {
     <div class="flex h-full flex-col items-center justify-center gap-3 text-center">
-      <span class="material-symbols-rounded text-5xl text-red-400">cloud_off</span>
-      <p class="text-lg text-gray-500 dark:text-gray-400">Failed to load weather data</p>
+      <span class="material-symbols-rounded text-5xl">cloud_off</span>
+      <p class="text-lg">Failed to load weather data</p>
     </div>
   } @else {
     <div
@@ -61,10 +59,10 @@
     >
       @for (day of days(); track day.date) {
         <article
-          class="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900"
+          class="static-neo-card flex flex-col gap-3 rounded-2xl border bg-neutral-50 p-5 dark:bg-neutral-900"
         >
           <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <span class="text-sm font-medium">
               {{ day.date }}
             </span>
             <span class="text-3xl leading-none" [attr.aria-label]="day.skyDescription" role="img">
@@ -72,7 +70,7 @@
             </span>
           </div>
 
-          <p class="text-sm text-gray-600 dark:text-gray-300">{{ day.skyDescription }}</p>
+          <p class="text-sm">{{ day.skyDescription }}</p>
 
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-1" title="Min temperature">
@@ -89,7 +87,7 @@
             </div>
           </div>
 
-          <div class="flex flex-wrap gap-3 border-t border-gray-100 pt-3 dark:border-gray-800">
+          <div class="flex flex-wrap gap-3">
             @if (day.precipitation) {
               <div
                 class="flex items-center gap-1"
@@ -99,7 +97,7 @@
                 <span class="material-symbols-rounded text-base text-blue-400" aria-hidden="true">
                   water_drop
                 </span>
-                <span class="text-xs text-gray-500 dark:text-gray-400">
+                <span class="text-xs text-neutral-500 dark:text-neutral-400">
                   {{ day.precipitation }}%
                 </span>
               </div>
@@ -109,10 +107,12 @@
               title="Wind"
               [attr.aria-label]="day.wind + ' km/h wind'"
             >
-              <span class="material-symbols-rounded text-base text-gray-400" aria-hidden="true">
+              <span class="material-symbols-rounded text-base text-neutral-400" aria-hidden="true">
                 air
               </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">{{ day.wind }} km/h</span>
+              <span class="text-xs text-neutral-500 dark:text-neutral-400"
+                >{{ day.wind }} km/h</span
+              >
             </div>
             <div
               class="flex items-center gap-1"
@@ -122,7 +122,7 @@
               <span class="material-symbols-rounded text-base text-cyan-500" aria-hidden="true">
                 humidity_percentage
               </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">
+              <span class="text-xs text-neutral-500 dark:text-neutral-400">
                 {{ day.humidityMin }}-{{ day.humidityMax }}%
               </span>
             </div>
@@ -136,48 +136,42 @@
 <dialog
   #configDialog
   (click)="onConfigDialogClick($event)"
-  class="m-auto rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-700 dark:bg-gray-900"
+  class="static-neo-card m-auto w-full max-w-sm rounded-2xl border bg-neutral-50 p-0 backdrop:bg-black/40 dark:bg-neutral-900"
 >
-  <div class="flex w-72 flex-col gap-5" [formGroup]="configForm">
+  <form class="flex flex-col gap-4 p-6" [formGroup]="configForm" (ngSubmit)="saveConfig()">
     <div class="flex items-center justify-between">
       <h2 class="text-lg font-semibold">Settings</h2>
       <button
         type="button"
         (click)="closeConfig()"
         aria-label="Close"
-        class="flex cursor-pointer rounded-lg p-1 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+        class="flex cursor-pointer p-1 transition hover:text-red-500"
       >
         <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
     </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label for="aemet-api-key" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-        API Key <span class="text-toronja-500">*</span>
-      </label>
+    <div class="flex flex-col gap-1">
+      <label for="aemet-api-key" class="font-medium"> API Key * </label>
       <input
         id="aemet-api-key"
         type="text"
         formControlName="apiKey"
         placeholder="Your AEMET API key"
-        class="rounded-lg border border-gray-300 bg-white px-3 py-2 font-mono text-sm transition focus:border-toronja-500 focus:ring-2 focus:ring-toronja-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
       />
     </div>
 
-    <div class="flex flex-col gap-1.5">
-      <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
-        Municipality <span class="text-toronja-500">*</span>
-      </label>
+    <div class="flex flex-col gap-1">
+      <label for="municipality-search" class="font-medium">Municipality *</label>
       @if (selectedMunicipality(); as selected) {
-        <div
-          class="flex items-center justify-between rounded-lg border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-800"
-        >
-          <span class="text-sm">{{ selected.name }}</span>
+        <div class="flex items-center justify-between rounded-lg border-2 px-3 py-1">
+          <span>{{ selected.name }}</span>
           <button
             type="button"
             (click)="selectedMunicipality.set(null)"
             aria-label="Clear selection"
-            class="flex cursor-pointer text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-200"
+            class="flex cursor-pointer p-1 transition hover:text-red-500"
           >
             <span class="material-symbols-rounded text-base" aria-hidden="true">close</span>
           </button>
@@ -190,20 +184,18 @@
             placeholder="Search municipality..."
             [value]="municipalitySearch()"
             (input)="municipalitySearch.set(searchInput.value)"
-            class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition focus:border-toronja-500 focus:ring-2 focus:ring-toronja-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800"
+            class="focus:border-toronja-500 w-full rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
           />
           @if (filteredMunicipalities().length) {
-            <ul
-              class="mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
-            >
-              @for (m of filteredMunicipalities(); track m.id) {
+            <ul class="mt-1 max-h-48 w-full overflow-x-hidden overflow-y-auto rounded-lg border-2">
+              @for (municipality of filteredMunicipalities(); track municipality.id) {
                 <li>
                   <button
                     type="button"
-                    (click)="selectMunicipality(m)"
-                    class="w-full cursor-pointer px-3 py-2 text-left text-sm transition hover:bg-gray-100 dark:hover:bg-gray-700"
+                    (click)="selectMunicipality(municipality)"
+                    class="w-full cursor-pointer px-3 py-2 text-left transition outline-none hover:translate-x-2 focus:translate-x-2"
                   >
-                    {{ m.name }}
+                    {{ municipality.name }}
                   </button>
                 </li>
               }
@@ -214,12 +206,12 @@
     </div>
 
     <button
-      type="button"
-      (click)="saveConfig()"
+      type="submit"
       [disabled]="configForm.invalid || !selectedMunicipality()"
-      class="bg-toronja-500 hover:bg-toronja-600 disabled:bg-toronja-300 dark:disabled:bg-toronja-800 mt-1 cursor-pointer rounded-lg px-4 py-2.5 font-medium text-white shadow-sm transition disabled:cursor-not-allowed"
+      class="neo-button bg-toronja-500 mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
     >
+      <span class="material-symbols-rounded" aria-hidden="true">save</span>
       Save
     </button>
-  </div>
+  </form>
 </dialog>

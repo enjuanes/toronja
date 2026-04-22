@@ -9,7 +9,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
-import { interval } from 'rxjs';
+import { fromEvent, interval, merge, startWith, switchMap } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
 import { Sidebar } from '../../core/components/sidebar/sidebar';
 import { CHRONOMETER_PAUSE_KEY, CHRONOMETER_START_KEY } from '../../core/constants/core.constants';
 
@@ -22,6 +23,7 @@ import { CHRONOMETER_PAUSE_KEY, CHRONOMETER_START_KEY } from '../../core/constan
 export class Chronometer {
   private readonly destroyRef = inject(DestroyRef);
   private readonly titleService = inject(Title);
+  private readonly document = inject(DOCUMENT);
 
   protected sidebarOpen = signal(false);
 
@@ -37,7 +39,7 @@ export class Chronometer {
     if (!start) return '00:00:00';
 
     const end = this.pauseTime() ?? this.now();
-    let totalSeconds = Math.abs(Math.floor((end.getTime() - start.getTime()) / 1000));
+    let totalSeconds = Math.max(0, Math.floor((end.getTime() - start.getTime()) / 1000));
 
     const hours = Math.floor(totalSeconds / 3600);
     totalSeconds %= 3600;
@@ -48,8 +50,13 @@ export class Chronometer {
   });
 
   constructor() {
-    interval(1000)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    const visibility$ = fromEvent(this.document, 'visibilitychange').pipe(startWith(null));
+
+    visibility$
+      .pipe(
+        switchMap(() => interval(this.document.hidden ? 1000 : 100)),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe(() => this.now.set(new Date()));
 
     effect(() => {

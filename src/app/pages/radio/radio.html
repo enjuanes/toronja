@@ -1,27 +1,27 @@
 <app-sidebar [(open)]="sidebarOpen" />
 
 <header
-  class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-900"
+  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:bg-neutral-900"
 >
   <div class="flex items-center gap-3">
     <button
       type="button"
       (click)="sidebarOpen.set(true)"
       aria-label="Open menu"
-      class="flex cursor-pointer rounded-lg p-1 text-gray-600 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+      class="neo-button flex rounded-md p-1"
     >
       <span class="material-symbols-rounded" aria-hidden="true">menu</span>
     </button>
-    <h1 class="text-xl font-bold">Radio</h1>
+    <h1 class="text-xl font-semibold">Radio</h1>
   </div>
 
-  <div class="flex items-center gap-1">
+  <div class="flex items-center gap-3">
     <button
       type="button"
       (click)="resetStations()"
       title="Reset to default stations"
       aria-label="Reset to default stations"
-      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+      class="neo-button flex rounded-md bg-blue-500 p-1 text-white"
     >
       <span class="material-symbols-rounded" aria-hidden="true">reset_settings</span>
     </button>
@@ -30,7 +30,7 @@
       (click)="isDeleteMode.set(!isDeleteMode())"
       [title]="isDeleteMode() ? 'Exit delete mode' : 'Enter delete mode'"
       [aria-label]="isDeleteMode() ? 'Exit delete mode' : 'Enter delete mode'"
-      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+      class="neo-button flex rounded-md bg-red-500 p-1 text-white"
     >
       <span [class.filled]="isDeleteMode()" class="material-symbols-rounded" aria-hidden="true">
         delete
@@ -41,7 +41,7 @@
       (click)="openAddDialog()"
       title="Add Station"
       aria-label="Add radio station"
-      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
+      class="neo-button flex rounded-md bg-green-500 p-1 text-white"
     >
       <span class="material-symbols-rounded" aria-hidden="true">add</span>
     </button>
@@ -50,9 +50,8 @@
 
 <main>
   <section
-    class="mx-auto max-w-450 grid grid-cols-1 gap-4 px-4 pt-6 pb-24 sm:grid-cols-2 md:pt-16 lg:grid-cols-3 lg:pt-32 xl:grid-cols-4"
-    [class.lg:pb-28]="playingStation() && isDesktop()"
-    [class.lg:pb-14]="!(playingStation() && isDesktop())"
+    class="mx-auto grid max-w-450 grid-cols-1 gap-4 px-4 pt-6 pb-24 sm:grid-cols-2 md:pt-16 lg:grid-cols-3 lg:pt-32 xl:grid-cols-4"
+    [class]="showBottomBar() ? 'lg:pb-24' : 'lg:pb-14'"
   >
     @for (station of stations(); track station.id) {
       @if (isDeleteMode()) {
@@ -60,17 +59,13 @@
           type="button"
           (click)="deleteStation(station.id!)"
           [attr.aria-label]="'Delete ' + station.name"
-          class="group flex cursor-pointer items-center gap-4 rounded-2xl border border-gray-200 bg-white/60 p-4 text-left shadow-sm backdrop-blur-md transition-all hover:bg-gray-100/60 dark:border-gray-700 dark:bg-white/5 dark:hover:bg-white/10 hover:border-red-500"
+          class="neo-card flex cursor-pointer items-center gap-4 rounded-2xl bg-neutral-50 p-4 text-left hover:bg-red-500 hover:text-white dark:bg-neutral-900"
         >
           <span class="text-3xl" aria-hidden="true">{{ station.emoji }}</span>
           <div class="min-w-0 flex-1">
             <h2 class="font-semibold wrap-break-word">{{ station.name }}</h2>
           </div>
-          <span
-            class="material-symbols-rounded text-gray-400 group-hover:text-red-500"
-            aria-hidden="true"
-            >delete</span
-          >
+          <span class="material-symbols-rounded" aria-hidden="true">delete</span>
         </button>
       } @else {
         <button
@@ -78,161 +73,191 @@
           (click)="playingId() === station.id ? stopPlayback() : playStation(station)"
           [attr.aria-label]="(playingId() === station.id ? 'Stop ' : 'Play ') + station.name"
           [disabled]="isLoadingStationId() === station.id"
-          class="flex cursor-pointer items-center gap-4 rounded-2xl border bg-white/60 p-4 text-left shadow-sm backdrop-blur-md transition-all hover:bg-gray-100/60 dark:bg-white/5 dark:hover:bg-white/10"
+          class="flex cursor-pointer items-center gap-4 rounded-2xl p-4 text-left"
           [class]="
             playingId() === station.id
-              ? 'border-toronja-500'
-              : 'border-gray-200 dark:border-gray-700'
+              ? 'neo-card-pressed bg-toronja-500/20'
+              : 'neo-card bg-neutral-50 dark:bg-neutral-900'
           "
         >
-          <span class="text-3xl" aria-hidden="true">{{
-            station.emoji
-          }}</span>
+          <span class="text-3xl" aria-hidden="true">{{ station.emoji }}</span>
           <div class="min-w-0 flex-1">
             <h2 class="font-semibold wrap-break-word">{{ station.name }}</h2>
           </div>
           @if (isLoadingStationId() === station.id) {
-            <span class="material-symbols-rounded text-toronja-500 animate-spin" aria-hidden="true">
+            <span class="material-symbols-rounded animate-spin" aria-hidden="true">
               progress_activity
             </span>
           } @else if (playingId() === station.id) {
             <div class="flex items-end gap-0.75" aria-label="Reproduciendo" role="img">
-              <span class="eq-bar-1 block h-4 w-0.75 origin-bottom rounded-sm bg-toronja-500"></span>
-              <span class="eq-bar-2 block h-4 w-0.75 origin-bottom rounded-sm bg-toronja-500"></span>
-              <span class="eq-bar-3 block h-4 w-0.75 origin-bottom rounded-sm bg-toronja-500"></span>
+              <span
+                class="eq-bar-1 block h-4 w-0.75 origin-bottom rounded-sm bg-neutral-900 dark:bg-white"
+              ></span>
+              <span
+                class="eq-bar-2 block h-4 w-0.75 origin-bottom rounded-sm bg-neutral-900 dark:bg-white"
+              ></span>
+              <span
+                class="eq-bar-3 block h-4 w-0.75 origin-bottom rounded-sm bg-neutral-900 dark:bg-white"
+              ></span>
             </div>
           } @else {
-            <span class="material-symbols-rounded filled text-toronja-500" aria-hidden="true">
-              play_arrow
-            </span>
+            <span class="material-symbols-rounded filled" aria-hidden="true"> play_arrow </span>
           }
         </button>
       }
     } @empty {
-      <p class="col-span-full py-16 text-center text-gray-400 dark:text-gray-600">
+      <p class="col-span-full py-16 text-center text-neutral-400 dark:text-neutral-600">
         No stations yet. Tap <strong>+</strong> to add one.
       </p>
     }
   </section>
 </main>
-<footer
-  class="w-full fixed bottom-0 z-10 text-center py-3 text-gray-400 dark:bg-gray-950 dark:text-gray-600"
->
-  These stations were sourced thanks to
-  <a
-    href="https://github.com/LaQuay/TDTChannels/blob/master/RADIO.md"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="underline"
-    >TDTChannels</a
-  >
-  and
-  <a href="https://fallout.fm/" target="_blank" rel="noopener noreferrer" class="underline"
-    >Fallout.FM</a
-  >. You can find more stations there.
-</footer>
 
-@if (playingStation() && isDesktop()) {
+@if (showBottomBar()) {
   <div
-    class="fixed bottom-0 left-0 right-0 z-20 flex items-center gap-4 border-t border-gray-200 bg-white/90 px-6 py-3 backdrop-blur-md dark:border-gray-700 dark:bg-gray-900/90"
+    class="fixed bottom-0 z-10 flex w-full items-center gap-4 border-t-2 bg-neutral-50 px-6 py-3 dark:bg-neutral-900"
     role="region"
     aria-label="Now playing"
   >
-    <span class="text-2xl" aria-hidden="true">{{ playingStation()!.emoji }}</span>
-    <p class="min-w-0 flex-1 truncate font-semibold">{{ playingStation()!.name }}</p>
-
-    <div
-      class="flex items-center gap-2"
-      role="group"
-      aria-label="Volume control"
-      (wheel)="onVolumeWheel($event)"
-    >
+    @if (isPlaying()) {
       <button
         type="button"
-        (click)="toggleMute()"
-        [attr.aria-label]="muted() ? 'Unmute' : 'Mute'"
-        class="flex cursor-pointer rounded p-0.5 text-gray-500 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+        (click)="stopPlayback()"
+        aria-label="Stop playback"
+        class="neo-button flex rounded-md bg-red-500 p-1 text-white"
       >
-        <span class="material-symbols-rounded" aria-hidden="true">{{ volumeIcon() }}</span>
+        <span class="material-symbols-rounded filled" aria-hidden="true">stop</span>
       </button>
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        [value]="volume()"
-        (input)="setVolume(+$any($event.target).value)"
-        aria-label="Volume"
-        class="w-32 cursor-pointer accent-toronja-500"
-      />
+    } @else {
+      <button
+        type="button"
+        (click)="playStation(lastPlayingStation()!)"
+        aria-label="Stop playback"
+        class="neo-button flex rounded-md bg-green-500 p-1 text-white"
+        [class]="isLoadingStation() ? 'pointer-events-none bg-neutral-500' : 'bg-green-500'"
+        [disabled]="isLoadingStation()"
+      >
+        @if (isLoadingStation()) {
+          <span class="material-symbols-rounded animate-spin" aria-hidden="true"
+            >progress_activity</span
+          >
+        } @else {
+          <span class="material-symbols-rounded filled" aria-hidden="true">play_arrow</span>
+        }
+      </button>
+    }
+    <div class="flex flex-1 items-center gap-1 overflow-hidden">
+      <span class="text-2xl" aria-hidden="true">{{ lastPlayingStation()!.emoji }}</span>
+      <p class="max-w-2xl overflow-hidden font-semibold text-nowrap text-ellipsis">
+        {{ lastPlayingStation()!.name }}
+      </p>
     </div>
 
-    <button
-      type="button"
-      (click)="stopPlayback()"
-      aria-label="Stop playback"
-      class="text-toronja-500 hover:bg-toronja-50 dark:hover:bg-toronja-950 flex cursor-pointer rounded-lg p-2 transition"
-    >
-      <span class="material-symbols-rounded filled" aria-hidden="true">stop</span>
-    </button>
+    @if (isDesktop()) {
+      <div
+        class="flex items-center gap-2"
+        role="group"
+        aria-label="Volume control"
+        (wheel)="onVolumeWheel($event)"
+      >
+        <button
+          type="button"
+          (click)="toggleMute()"
+          [attr.aria-label]="muted() ? 'Unmute' : 'Mute'"
+          class="neo-button flex rounded-md p-1"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">{{ volumeIcon() }}</span>
+        </button>
+        <input
+          #range
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          [value]="volume()"
+          (input)="setVolume(+$any($event.target).value)"
+          aria-label="Volume"
+          class="neo-slider w-32 cursor-pointer"
+        />
+      </div>
+    }
   </div>
+} @else {
+  <footer
+    class="fixed bottom-0 z-10 w-full bg-amber-50 py-3 text-center text-neutral-400 dark:bg-taupe-900"
+  >
+    These stations were sourced thanks to
+    <a
+      href="https://github.com/LaQuay/TDTChannels/blob/master/RADIO.md"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="underline"
+      >TDTChannels</a
+    >
+    and
+    <a href="https://fallout.fm/" target="_blank" rel="noopener noreferrer" class="underline"
+      >Fallout.FM</a
+    >. You can find more stations there.
+  </footer>
 }
 
 <dialog
   #addDialog
-  class="m-auto w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-0 shadow-xl backdrop:bg-black/40 dark:border-gray-700 dark:bg-gray-900"
+  class="static-neo-card m-auto w-full max-w-sm rounded-2xl border bg-neutral-50 p-0 backdrop:bg-black/40 dark:bg-neutral-900"
 >
   <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()" class="flex flex-col gap-4 p-6">
     <div class="flex items-center justify-between">
-      <h2 class="text-lg font-bold">Add Station</h2>
+      <h2 class="text-lg font-semibold">Add Station</h2>
       <button
         type="button"
         (click)="closeAddDialog()"
         aria-label="Close"
-        class="flex cursor-pointer rounded-lg p-1 text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800"
+        class="flex cursor-pointer p-1 transition hover:text-red-500"
       >
         <span class="material-symbols-rounded" aria-hidden="true">close</span>
       </button>
     </div>
 
-    <label class="flex flex-col gap-1">
-      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Emoji</span>
+    <div class="flex flex-col gap-1">
+      <label for="station-emoji" class="font-medium">Emoji</label>
       <input
+        id="station-emoji"
         formControlName="emoji"
         placeholder="📻"
         [maxlength]="4"
-        class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
       />
-    </label>
+    </div>
 
-    <label class="flex flex-col gap-1">
-      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Name</span>
+    <div class="flex flex-col gap-1">
+      <label for="station-name" class="font-medium">Name</label>
       <input
+        id="station-name"
         formControlName="name"
         placeholder="Radio 1"
         [maxlength]="50"
-        class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
       />
-    </label>
+    </div>
 
-    <label class="flex flex-col gap-1">
-      <span class="text-sm font-medium text-gray-700 dark:text-gray-300"
-        >URL <span class="text-red-500">*</span></span
-      >
+    <div class="flex flex-col gap-1">
+      <label for="station-url" class="font-medium">URL *</label>
       <input
+        id="station-url"
         formControlName="url"
         type="url"
         placeholder="https://stream.example.com/radio.mp3"
         required
-        class="rounded-lg border border-gray-300 bg-transparent px-3 py-2 outline-none transition focus:border-toronja-500 dark:border-gray-600"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
       />
-    </label>
+    </div>
 
     <button
       type="submit"
       [disabled]="addForm.invalid"
-      class="bg-toronja-500 hover:bg-toronja-600 mt-2 cursor-pointer rounded-lg px-4 py-2 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+      class="neo-button mt-2 flex items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-2 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
     >
+      <span class="material-symbols-rounded" aria-hidden="true">add</span>
       Add
     </button>
   </form>

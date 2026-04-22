@@ -1,7 +1,7 @@
 @if (open()) {
   <!-- Backdrop -->
   <div
-    class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity"
+    class="fixed inset-0 z-40 bg-black/40"
     (click)="close()"
     (keydown.escape)="close()"
     tabindex="-1"
@@ -11,60 +11,68 @@
 
 <!-- Sidebar -->
 <nav
-  class="fixed top-0 left-0 z-50 flex h-full flex-col border-r border-gray-200 bg-white transition-transform duration-300 dark:border-gray-700 dark:bg-gray-900"
+  class="fixed top-0 left-0 z-50 flex h-full flex-col border-r-2 bg-neutral-50 transition-transform duration-300 dark:bg-neutral-900"
   [class.-translate-x-full]="!open()"
   [attr.aria-hidden]="!open()"
 >
-  <div
-    class="flex gap-5 items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700"
-  >
-    <a routerLink="/" class="text-toronja-500 text-xl font-bold segoe-emoji" (click)="close()"
+  <div class="flex items-center justify-between gap-10 border-b-2 px-4 py-3">
+    <a routerLink="/" class="text-toronja-500 segoe-emoji text-xl font-semibold" (click)="close()"
       >🍊 Toronja</a
     >
     <button
       type="button"
       (click)="close()"
       aria-label="Close menu"
-      class="flex cursor-pointer rounded-lg p-1 text-gray-500 transition hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+      class="flex cursor-pointer p-1 transition hover:text-red-500"
     >
       <span class="material-symbols-rounded flex" aria-hidden="true">close</span>
     </button>
   </div>
 
-  <ul class="flex-1 overflow-y-auto py-2" role="list">
+  <ul class="flex-1 overflow-y-auto" role="list">
     <li>
       <a
         routerLink="/"
-        routerLinkActive="bg-toronja-50 text-toronja-600 dark:bg-toronja-950 dark:text-toronja-400"
-        [routerLinkActiveOptions]="{ exact: true }"
         (click)="close()"
-        class="flex items-center gap-3 px-4 py-3 text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+        class="group flex items-center gap-3 border-b-2 px-4 py-3 transition outline-none"
       >
-        <span class="material-symbols-rounded" aria-hidden="true">dashboard</span>
-        Dashboard
+        <span
+          class="material-symbols-rounded transition group-hover:translate-x-2 group-focus:translate-x-2"
+          aria-hidden="true"
+          >dashboard</span
+        >
+        <span class="transition group-hover:translate-x-2 group-focus:translate-x-2"
+          >Dashboard</span
+        >
       </a>
     </li>
     @for (page of pages; track page.code) {
       <li>
         <a
           [routerLink]="'/' + page.code"
-          routerLinkActive="bg-toronja-50 text-toronja-600 dark:bg-toronja-950 dark:text-toronja-400"
+          [routerLinkActive]="page.cardBackground"
           (click)="close()"
-          class="flex items-center gap-3 px-4 py-3 text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+          class="group flex items-center gap-3 border-b-2 px-4 py-3 outline-none"
         >
-          <span class="material-symbols-rounded" aria-hidden="true">{{ page.icon }}</span>
-          {{ page.title }}
+          <span
+            class="material-symbols-rounded transition group-hover:translate-x-2 group-focus:translate-x-2"
+            aria-hidden="true"
+            >{{ page.icon }}</span
+          >
+          <span class="transition group-hover:translate-x-2 group-focus:translate-x-2">{{
+            page.title
+          }}</span>
         </a>
       </li>
     }
   </ul>
 
-  <div class="border-t border-gray-200 px-4 py-3 dark:border-gray-700">
+  <div class="p-4">
     <button
       type="button"
       (click)="themeService.cycle()"
       [attr.aria-label]="'Theme: ' + themeService.current()"
-      class="flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-3 text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+      class="neo-button flex w-full items-center gap-3 rounded-lg bg-amber-300 px-4 py-3 transition dark:bg-blue-900"
     >
       <span class="material-symbols-rounded" aria-hidden="true">{{ themeService.icon() }}</span>
       {{ themeService.title() }}

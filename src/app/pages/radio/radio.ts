@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   OnInit,
@@ -13,6 +14,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import Hls from 'hls.js';
 import { Sidebar } from '../../core/components/sidebar/sidebar';
+import { RADIO_VOLUME_KEY } from '../../core/constants/core.constants';
 import { EmojiArtworkService } from '../../core/services/emoji-artwork.service';
 import { FaviconService } from '../../core/services/favicon.service';
 import { RadioService, RadioStation } from '../../core/services/radio.service';
@@ -33,20 +35,28 @@ export class Radio implements OnInit {
   private readonly emojiArtwork = inject(EmojiArtworkService);
 
   private readonly addDialog = viewChild<ElementRef<HTMLDialogElement>>('addDialog');
-  private audioElement: HTMLVideoElement | null = null;
+  private readonly audioElement: HTMLVideoElement = document.createElement('video');
   private hls: Hls | null = null;
 
   protected sidebarOpen = signal(false);
   protected readonly stations = signal<RadioStation[]>([]);
   protected readonly playingId = signal<number | null>(null);
+  protected readonly lastPlayingId = signal<number | null>(null);
   protected isLoadingStationId = signal<number | null>(null);
+  protected isLoadingStation = computed(() => this.isLoadingStationId() !== null);
   protected isDeleteMode = signal(false);
   protected readonly volume = signal(1);
   protected readonly muted = signal(false);
   protected readonly isDesktop = signal(false);
-  protected readonly playingStation = computed(() =>
-    this.stations().find((s) => s.id === this.playingId()) ?? null,
+  protected readonly playingStation = computed(
+    () => this.stations().find((station) => station.id === this.playingId()) ?? null
   );
+  protected readonly isPlaying = computed(() => this.playingId() !== null);
+  protected readonly lastPlayingStation = computed(
+    () => this.stations().find((station) => station.id === this.lastPlayingId()) ?? null
+  );
+  protected readonly showBottomBar = computed(() => this.lastPlayingId());
+
   protected readonly volumeIcon = computed(() => {
     if (this.muted()) return 'volume_off';
     const v = this.volume();
@@ -62,13 +72,40 @@ export class Radio implements OnInit {
   });
 
   constructor() {
-    this.destroyRef.onDestroy(() => this.stopPlayback());
+    effect(() => {
+      if (this.playingId() !== null) {
+        this.lastPlayingId.set(this.playingId());
+      }
+    });
+
+    effect(() => {
+      const station = this.playingStation();
+      if (station) {
+        this.updateMediaSession(station);
+      }
+    });
+
+    this.audioElement.onpause = () => this.stopPlayback();
+
+    this.destroyRef.onDestroy(() => {
+      this.stopPlayback();
+      this.audioElement.onpause = null;
+      this.audioElement.src = '';
+    });
 
     const query = window.matchMedia('(pointer: fine) and (hover: hover)');
     this.isDesktop.set(query.matches);
     const handler = (e: MediaQueryListEvent) => this.isDesktop.set(e.matches);
     query.addEventListener('change', handler);
     this.destroyRef.onDestroy(() => query.removeEventListener('change', handler));
+
+    if (this.isDesktop()) {
+      const saved = localStorage.getItem(RADIO_VOLUME_KEY);
+      if (saved !== null) {
+        const parsed = parseFloat(saved);
+        if (!isNaN(parsed)) this.volume.set(Math.min(1, Math.max(0, parsed)));
+      }
+    }
   }
 
   async ngOnInit(): Promise<void> {
@@ -109,6 +146,7 @@ export class Radio implements OnInit {
   protected async deleteStation(id: number): Promise<void> {
     if (this.playingId() === id) {
       this.stopPlayback();
+      this.lastPlayingId.set(null);
     }
     await this.radioService.delete(id);
     await this.loadStations();
@@ -117,6 +155,7 @@ export class Radio implements OnInit {
   protected async resetStations(): Promise<void> {
     if (confirm('Are you sure you want to reset all stations to default? This cannot be undone.')) {
       this.stopPlayback();
+      this.lastPlayingId.set(null);
       await this.radioService.resetRadios();
       await this.loadStations();
     }
@@ -125,14 +164,8 @@ export class Radio implements OnInit {
   protected playStation(station: RadioStation): void {
     this.stopPlayback();
 
-    this.audioElement = document.createElement('video');
     this.audioElement.volume = this.muted() ? 0 : this.volume();
-
-    // set station name in video element
-    this.audioElement.setAttribute('title', station.name + 'asdasd');
-    this.audioElement.onpause = () => {
-      this.stopPlayback();
-    };
+    this.audioElement.setAttribute('title', station.name);
 
     let playPromise: Promise<void> = Promise.resolve();
 
@@ -159,7 +192,6 @@ export class Radio implements OnInit {
         this.playingId.set(station.id!);
         this.titleService.setTitle(`${station.name}`);
         this.faviconService.setFavicon(this.emojiArtwork.generateArtworkUrl(station.emoji, 128));
-        this.updateMediaSession(station);
       })
       .catch(() => {
         this.stopPlayback();
@@ -170,13 +202,14 @@ export class Radio implements OnInit {
   protected toggleMute(): void {
     const newMuted = !this.muted();
     this.muted.set(newMuted);
-    if (this.audioElement) this.audioElement.volume = newMuted ? 0 : this.volume();
+    this.audioElement.volume = newMuted ? 0 : this.volume();
   }
 
   protected setVolume(value: number): void {
     this.volume.set(value);
     this.muted.set(false);
-    if (this.audioElement) this.audioElement.volume = value;
+    this.audioElement.volume = value;
+    if (this.isDesktop()) localStorage.setItem(RADIO_VOLUME_KEY, String(value));
   }
 
   protected onVolumeWheel(event: WheelEvent): void {
@@ -190,12 +223,7 @@ export class Radio implements OnInit {
       this.hls.destroy();
       this.hls = null;
     }
-    if (this.audioElement) {
-      this.audioElement.onpause = null;
-      this.audioElement.pause();
-      this.audioElement.src = '';
-      this.audioElement = null;
-    }
+    this.audioElement.pause();
     this.isLoadingStationId.set(null);
     this.playingId.set(null);
     this.titleService.setTitle('Radio');
@@ -227,7 +255,8 @@ export class Radio implements OnInit {
     });
 
     navigator.mediaSession.setActionHandler('play', () => {
-      this.audioElement?.play();
+      const last = this.lastPlayingStation();
+      if (last) this.playStation(last);
     });
 
     navigator.mediaSession.setActionHandler('pause', () => {

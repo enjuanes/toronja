@@ -1,0 +1,35 @@
+<app-sidebar [(open)]="sidebarOpen" />
+<div class="flex h-dvh flex-col">
+  <header
+    class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:border-neutral-400 dark:bg-neutral-900"
+  >
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        (click)="sidebarOpen.set(true)"
+        aria-label="Open menu"
+        class="neo-button flex rounded-md p-1"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+      </button>
+      <h1 class="text-xl font-semibold">Notepad</h1>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button
+        type="button"
+        (click)="wrapEnabled.update((wrap) => !wrap)"
+        title="Toggle line wrap"
+        aria-label="Toggle line wrap"
+        class="neo-button flex rounded-md p-1"
+        [class]="wrapEnabled() ? 'bg-toronja-500 text-white' : ''"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">wrap_text</span>
+      </button>
+    </div>
+  </header>
+  <main class="flex min-h-0 flex-1 flex-col">
+    <!-- <p class="bg-amber-300">tabs</p> -->
+    <div #codeMirrorWrapper class="min-h-0 flex-1"></div>
+  </main>
+</div>

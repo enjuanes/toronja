@@ -11,7 +11,7 @@ layer(google-icons);
   src: url('/fonts/segoe-ui-emoji.woff2') format('woff2');
   font-display: swap;
 }
-
+/* Tailwind */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -33,10 +33,12 @@ layer(google-icons);
   --color-neutral-250: #e1e1e1;
 }
 
+/*  Segoe UI Emoji */
 .segoe-emoji {
   font-family: 'Segoe UI Emoji', 'Roboto', sans-serif;
 }
 
+/* Material Symbols Rounded */
 .material-symbols-rounded {
   --fill: 0;
   --wght: 400;
@@ -56,4 +58,19 @@ layer(google-icons);
 
 dialog {
   color: inherit;
+}
+
+/* CodeMirror */
+.cm-editor {
+  height: 100%;
+  /* font-size: var(--text-sm); */
+  font-size: var(--text-base);
+}
+
+.cm-scroller {
+  overflow: auto;
+}
+
+.cm-content {
+  font-family: var(--font-mono);
 }

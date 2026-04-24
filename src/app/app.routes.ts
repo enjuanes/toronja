@@ -55,9 +55,13 @@ export const routes: Routes = [
     title: 'Radio',
   },
   {
+    path: 'notepad',
+    loadComponent: () => import('./pages/notepad/notepad').then((m) => m.Notepad),
+    title: 'Notepad',
+  },
+  {
     path: 'psicotecnico',
-    loadComponent: () =>
-      import('./pages/psicotecnico/psicotecnico').then((m) => m.Psicotecnico),
+    loadComponent: () => import('./pages/psicotecnico/psicotecnico').then((m) => m.Psicotecnico),
     title: 'Psicotécnico',
   },
 ];

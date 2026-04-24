@@ -11,20 +11,6 @@ export const PAGES = [
     description: 'A simple chronometer',
     icon: 'timer',
     code: 'chronometer',
-    cardBackground: 'bg-emerald-500/40',
-  },
-  {
-    title: 'Countdown',
-    description: 'A countdown to important moments',
-    icon: 'event',
-    code: 'countdown',
-    cardBackground: 'bg-amber-500/40',
-  },
-  {
-    title: 'Aemet',
-    description: 'Get weather prediction from AEMET',
-    icon: 'cloud',
-    code: 'aemet',
     cardBackground: 'bg-rose-500/40',
   },
   {
@@ -32,14 +18,35 @@ export const PAGES = [
     description: 'Configure your favorite radios stations',
     icon: 'radio',
     code: 'radio',
-    cardBackground: 'bg-teal-500/40',
+    cardBackground: 'bg-lime-500/40',
+  },
+  {
+    title: 'Notepad',
+    description: 'Write down your thoughts',
+    icon: 'sticky_note_2',
+    code: 'notepad',
+    cardBackground: 'bg-yellow-500/40',
+  },
+  {
+    title: 'Aemet',
+    description: 'Get weather prediction from AEMET',
+    icon: 'cloud',
+    code: 'aemet',
+    cardBackground: 'bg-sky-500/40',
+  },
+  {
+    title: 'Countdown',
+    description: 'A countdown to important moments',
+    icon: 'event',
+    code: 'countdown',
+    cardBackground: 'bg-toronja-500/40',
   },
   {
     title: 'Psicotécnico',
     description: 'Test de coordinación visomotora',
     icon: 'sports_score',
     code: 'psicotecnico',
-    cardBackground: 'bg-yellow-500/40',
+    cardBackground: 'bg-neutral-500/40',
   },
 ] as const;
 
@@ -47,3 +54,6 @@ export const CHRONOMETER_START_KEY = 'CHRONOMETER_START';
 export const CHRONOMETER_PAUSE_KEY = 'CHRONOMETER_PAUSE';
 
 export const RADIO_VOLUME_KEY = 'RADIO_VOLUME';
+
+export const NOTEPAD_CONTENT_KEY = 'NOTEPAD_CONTENT';
+export const NOTEPAD_ENABLE_WRAP_KEY = 'NOTEPAD_ENABLE_WRAP';

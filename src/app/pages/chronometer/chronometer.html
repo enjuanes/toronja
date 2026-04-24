@@ -20,29 +20,17 @@
   </span>
 
   <div class="flex gap-4">
-    @if (running()) {
-      <button
-        type="button"
-        (click)="pause()"
-        aria-label="Pause"
-        class="neo-button bg-tornja-500 flex rounded-lg bg-amber-500 p-2 text-white"
-      >
-        <span class="material-symbols-rounded filled text-3xl leading-none" aria-hidden="true"
-          >pause</span
-        >
-      </button>
-    } @else {
-      <button
-        type="button"
-        (click)="start()"
-        aria-label="Start"
-        class="neo-button flex rounded-lg bg-green-500 p-2 text-white"
-      >
-        <span class="material-symbols-rounded filled text-3xl leading-none" aria-hidden="true">
-          play_arrow
-        </span>
-      </button>
-    }
+    <button
+      type="button"
+      (click)="togglePlayPause()"
+      aria-label="Pause"
+      class="neo-button bg-tornja-500 z-10 flex rounded-lg p-2 text-white"
+      [class]="running() ? 'bg-amber-500' : 'bg-green-500'"
+    >
+      <span class="material-symbols-rounded filled text-3xl leading-none" aria-hidden="true">{{
+        running() ? 'pause' : 'play_arrow'
+      }}</span>
+    </button>
 
     @if (started()) {
       <button
@@ -50,6 +38,8 @@
         (click)="stop()"
         aria-label="Stop"
         class="neo-button flex rounded-lg bg-red-500 p-2 text-white"
+        [animate.enter]="animationsEnabled() ? 'enter-animation' : null"
+        [animate.leave]="animationsEnabled() ? 'leave-animation' : null"
       >
         <span class="material-symbols-rounded filled text-3xl leading-none" aria-hidden="true"
           >stop</span

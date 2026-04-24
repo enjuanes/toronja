@@ -17,6 +17,7 @@ layer(google-icons);
 @theme {
   --font-sans: 'Fredoka', sans-serif;
   --font-mono: 'Space Mono', monospace;
+
   --color-toronja-50: #fff7ed;
   --color-toronja-100: #ffedd5;
   --color-toronja-200: #fdd6a9;
@@ -28,6 +29,8 @@ layer(google-icons);
   --color-toronja-800: #932f0a;
   --color-toronja-900: #79290e;
   --color-toronja-950: #421206;
+
+  --color-neutral-250: #e1e1e1;
 }
 
 .segoe-emoji {

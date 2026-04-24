@@ -1,0 +1,25 @@
+.enter-animation {
+  animation: button-enter 150ms;
+}
+
+.leave-animation {
+  animation: button-leave 150ms;
+}
+
+@keyframes button-enter {
+  from {
+    margin-left: -66px;
+  }
+  to {
+    margin-left: 0;
+  }
+}
+
+@keyframes button-leave {
+  from {
+    margin-left: 0;
+  }
+  to {
+    margin-left: -66px;
+  }
+}

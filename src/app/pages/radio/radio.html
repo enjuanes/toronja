@@ -1,7 +1,7 @@
 <app-sidebar [(open)]="sidebarOpen" />
 
 <header
-  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:bg-neutral-900"
+  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:border-neutral-400 dark:bg-neutral-900"
 >
   <div class="flex items-center gap-3">
     <button
@@ -115,7 +115,7 @@
 
 @if (showBottomBar()) {
   <div
-    class="fixed bottom-0 z-10 flex w-full items-center gap-4 border-t-2 bg-neutral-50 px-6 py-3 dark:bg-neutral-900"
+    class="fixed bottom-0 z-10 flex w-full items-center gap-4 border-t-2 bg-neutral-50 px-6 py-3 dark:border-neutral-400 dark:bg-neutral-900"
     role="region"
     aria-label="Now playing"
   >
@@ -203,7 +203,7 @@
 
 <dialog
   #addDialog
-  class="static-neo-card m-auto w-full max-w-sm rounded-2xl border bg-neutral-50 p-0 backdrop:bg-black/40 dark:bg-neutral-900"
+  class="static-neo-card m-auto w-full max-w-sm rounded-2xl bg-neutral-50 p-0 backdrop:bg-black/40 dark:bg-neutral-900"
 >
   <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()" class="flex flex-col gap-4 p-6">
     <div class="flex items-center justify-between">
@@ -225,7 +225,7 @@
         formControlName="emoji"
         placeholder="📻"
         [maxlength]="4"
-        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
       />
     </div>
 
@@ -236,7 +236,7 @@
         formControlName="name"
         placeholder="Radio 1"
         [maxlength]="50"
-        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
       />
     </div>
 
@@ -248,7 +248,7 @@
         type="url"
         placeholder="https://stream.example.com/radio.mp3"
         required
-        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
       />
     </div>
 

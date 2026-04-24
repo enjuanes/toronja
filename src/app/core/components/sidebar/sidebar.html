@@ -11,11 +11,13 @@
 
 <!-- Sidebar -->
 <nav
-  class="fixed top-0 left-0 z-50 flex h-full flex-col border-r-2 bg-neutral-50 transition-transform duration-300 dark:bg-neutral-900"
+  class="fixed top-0 left-0 z-50 flex h-full flex-col border-r-2 bg-neutral-50 transition-transform duration-300 dark:border-neutral-400 dark:bg-neutral-900"
   [class.-translate-x-full]="!open()"
   [attr.aria-hidden]="!open()"
 >
-  <div class="flex items-center justify-between gap-10 border-b-2 px-4 py-3">
+  <div
+    class="flex items-center justify-between gap-10 border-b-2 px-4 py-3 dark:border-neutral-400"
+  >
     <a routerLink="/" class="text-toronja-500 segoe-emoji text-xl font-semibold" (click)="close()"
       >🍊 Toronja</a
     >
@@ -34,7 +36,7 @@
       <a
         routerLink="/"
         (click)="close()"
-        class="group flex items-center gap-3 border-b-2 px-4 py-3 transition outline-none"
+        class="group flex items-center gap-3 border-b-2 px-4 py-3 transition outline-none dark:border-neutral-400"
       >
         <span
           class="material-symbols-rounded transition group-hover:translate-x-2 group-focus:translate-x-2"
@@ -52,7 +54,7 @@
           [routerLink]="'/' + page.code"
           [routerLinkActive]="page.cardBackground"
           (click)="close()"
-          class="group flex items-center gap-3 border-b-2 px-4 py-3 outline-none"
+          class="group flex items-center gap-3 border-b-2 px-4 py-3 outline-none dark:border-neutral-400"
         >
           <span
             class="material-symbols-rounded transition group-hover:translate-x-2 group-focus:translate-x-2"

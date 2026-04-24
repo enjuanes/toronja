@@ -1,4 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -9,8 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
-import { fromEvent, interval, merge, startWith, switchMap } from 'rxjs';
-import { DOCUMENT } from '@angular/common';
+import { fromEvent, interval, startWith, switchMap } from 'rxjs';
 import { Sidebar } from '../../core/components/sidebar/sidebar';
 import { CHRONOMETER_PAUSE_KEY, CHRONOMETER_START_KEY } from '../../core/constants/core.constants';
 
@@ -18,12 +19,15 @@ import { CHRONOMETER_PAUSE_KEY, CHRONOMETER_START_KEY } from '../../core/constan
   selector: 'app-chronometer',
   imports: [Sidebar],
   templateUrl: './chronometer.html',
+  styleUrl: './chronometer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Chronometer {
   private readonly destroyRef = inject(DestroyRef);
   private readonly titleService = inject(Title);
   private readonly document = inject(DOCUMENT);
+
+  protected animationsEnabled = signal(false);
 
   protected sidebarOpen = signal(false);
 
@@ -55,16 +59,20 @@ export class Chronometer {
     visibility$
       .pipe(
         switchMap(() => interval(this.document.hidden ? 1000 : 100)),
-        takeUntilDestroyed(this.destroyRef),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => this.now.set(new Date()));
 
     effect(() => {
       this.titleService.setTitle(this.display());
     });
+
+    afterNextRender(() => {
+      this.animationsEnabled.set(true);
+    });
   }
 
-  protected start(): void {
+  private start(): void {
     const pause = this.pauseTime();
     const startVal = this.startTime();
 
@@ -82,10 +90,18 @@ export class Chronometer {
     }
   }
 
-  protected pause(): void {
+  private pause(): void {
     const now = new Date();
     this.pauseTime.set(now);
     localStorage.setItem(CHRONOMETER_PAUSE_KEY, now.toISOString());
+  }
+
+  protected togglePlayPause(): void {
+    if (this.running()) {
+      this.pause();
+    } else {
+      this.start();
+    }
   }
 
   protected stop(): void {

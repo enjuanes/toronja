@@ -1,11 +1,10 @@
-:root,
-.force-light {
+:root {
   --neo-shadow-color: var(--color-neutral-900);
   --neo-border-color: var(--color-neutral-900);
 
   /* Neo Card */
   --neo-card-border: 3px solid var(--neo-border-color);
-  --neo-card-inner-shadow-color: color-mix(in oklab, var(--color-black) 10%, transparent);
+  --neo-card-inner-shadow-color: var(--color-neutral-250);
   --neo-card-shadow:
     6px 6px 0 var(--neo-shadow-color), inset 0 -4px var(--neo-card-inner-shadow-color);
   --neo-card-shadow-hover:
@@ -26,19 +25,16 @@
   /* Neo Slider */
   --neo-slider-track-color: var(--color-blue-300);
   --neo-slider-background-color: var(--color-neutral-50);
-  --neo-slider-border-color: var(--color-neutral-900);
 }
 
-html.dark,
-.force-dark {
-  --neo-shadow-color: var(--color-neutral-500);
-  --neo-border-color: var(--color-white);
+html.dark {
+  --neo-shadow-color: var(--color-neutral-700);
+  --neo-border-color: var(--color-neutral-400);
 
-  --neo-card-inner-shadow-color: color-mix(in oklab, var(--color-white) 30%, transparent);
+  --neo-card-inner-shadow-color: var(--color-neutral-800);
 
   --neo-slider-background-color: var(--color-neutral-900);
-  --neo-slider-border-color: var(--color-white);
-  --neo-slider-track-color: var(--color-blue-500);
+  --neo-slider-track-color: var(--color-blue-800);
 }
 
 .static-neo-card {
@@ -131,7 +127,7 @@ html.dark,
 .neo-slider {
   appearance: none;
   height: 14px;
-  border: 2px solid var(--neo-slider-border-color);
+  border: 2px solid var(--neo-border-color);
   border-radius: 999px;
   overflow: hidden;
   background-color: var(--neo-slider-background-color);
@@ -141,7 +137,7 @@ html.dark,
   appearance: none;
   width: 12px;
   height: 12px;
-  border: 2px solid var(--neo-slider-border-color);
+  border: 2px solid var(--neo-border-color);
   box-shadow:
     6px 0px 0px 0px var(--neo-slider-background-color),
     -99px 0px 0px 99px var(--neo-slider-track-color);
@@ -153,7 +149,7 @@ html.dark,
   appearance: none;
   width: 8px;
   height: 8px;
-  border: 2px solid var(--neo-slider-border-color);
+  border: 2px solid var(--neo-border-color);
   box-shadow:
     6px 0px 0px 0px var(--neo-slider-background-color),
     -99px 0px 0px 99px var(--neo-slider-track-color);

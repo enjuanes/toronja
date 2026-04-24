@@ -1,7 +1,7 @@
 <app-sidebar [(open)]="sidebarOpen" />
 
 <header
-  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:bg-neutral-900"
+  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:border-neutral-400 dark:bg-neutral-900"
 >
   <div class="flex items-center gap-3">
     <button
@@ -59,7 +59,7 @@
     >
       @for (day of days(); track day.date) {
         <article
-          class="static-neo-card flex flex-col gap-3 rounded-2xl border bg-neutral-50 p-5 dark:bg-neutral-900"
+          class="static-neo-card flex flex-col gap-3 rounded-2xl bg-neutral-50 p-5 dark:bg-neutral-900"
         >
           <div class="flex items-center justify-between">
             <span class="text-sm font-medium">
@@ -136,7 +136,7 @@
 <dialog
   #configDialog
   (click)="onConfigDialogClick($event)"
-  class="static-neo-card m-auto w-full max-w-sm rounded-2xl border bg-neutral-50 p-0 backdrop:bg-black/40 dark:bg-neutral-900"
+  class="static-neo-card m-auto w-full max-w-sm rounded-2xl bg-neutral-50 p-0 backdrop:bg-black/40 dark:bg-neutral-900"
 >
   <form class="flex flex-col gap-4 p-6" [formGroup]="configForm" (ngSubmit)="saveConfig()">
     <div class="flex items-center justify-between">
@@ -158,14 +158,16 @@
         type="text"
         formControlName="apiKey"
         placeholder="Your AEMET API key"
-        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
+        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
       />
     </div>
 
     <div class="flex flex-col gap-1">
       <label for="municipality-search" class="font-medium">Municipality *</label>
       @if (selectedMunicipality(); as selected) {
-        <div class="flex items-center justify-between rounded-lg border-2 px-3 py-1">
+        <div
+          class="flex items-center justify-between rounded-lg border-2 px-3 py-1 dark:border-neutral-400"
+        >
           <span>{{ selected.name }}</span>
           <button
             type="button"
@@ -184,10 +186,12 @@
             placeholder="Search municipality..."
             [value]="municipalitySearch()"
             (input)="municipalitySearch.set(searchInput.value)"
-            class="focus:border-toronja-500 w-full rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none"
+            class="focus:border-toronja-500 w-full rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
           />
           @if (filteredMunicipalities().length) {
-            <ul class="mt-1 max-h-48 w-full overflow-x-hidden overflow-y-auto rounded-lg border-2">
+            <ul
+              class="mt-1 max-h-48 w-full overflow-x-hidden overflow-y-auto rounded-lg border-2 dark:border-neutral-400"
+            >
               @for (municipality of filteredMunicipalities(); track municipality.id) {
                 <li>
                   <button

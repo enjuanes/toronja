@@ -5,6 +5,7 @@
 layer(google-icons);
 @import 'tailwindcss';
 @import './neo-brutalism.css';
+@import './codemirror.css';
 
 @font-face {
   font-family: 'Segoe UI Emoji';
@@ -29,8 +30,6 @@ layer(google-icons);
   --color-toronja-800: #932f0a;
   --color-toronja-900: #79290e;
   --color-toronja-950: #421206;
-
-  --color-neutral-250: #e1e1e1;
 }
 
 /*  Segoe UI Emoji */
@@ -58,19 +57,4 @@ layer(google-icons);
 
 dialog {
   color: inherit;
-}
-
-/* CodeMirror */
-.cm-editor {
-  height: 100%;
-  /* font-size: var(--text-sm); */
-  font-size: var(--text-base);
-}
-
-.cm-scroller {
-  overflow: auto;
-}
-
-.cm-content {
-  font-family: var(--font-mono);
 }

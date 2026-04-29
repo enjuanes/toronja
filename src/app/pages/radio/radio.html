@@ -221,34 +221,44 @@
     <div class="flex flex-col gap-1">
       <label for="station-emoji" class="font-medium">Emoji</label>
       <input
+        autofocus
+        autocorrect="off"
+        autocomplete="off"
+        spellcheck="false"
         id="station-emoji"
         formControlName="emoji"
         placeholder="📻"
         [maxlength]="4"
-        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
+        class="rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none focus:border-blue-500 dark:border-neutral-400"
       />
     </div>
 
     <div class="flex flex-col gap-1">
       <label for="station-name" class="font-medium">Name</label>
       <input
+        autocorrect="off"
+        autocomplete="off"
+        spellcheck="false"
         id="station-name"
         formControlName="name"
         placeholder="Radio 1"
         [maxlength]="50"
-        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
+        class="rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none focus:border-blue-500 dark:border-neutral-400"
       />
     </div>
 
     <div class="flex flex-col gap-1">
       <label for="station-url" class="font-medium">URL *</label>
       <input
+        autocorrect="off"
+        autocomplete="off"
+        spellcheck="false"
         id="station-url"
         formControlName="url"
         type="url"
         placeholder="https://stream.example.com/radio.mp3"
         required
-        class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
+        class="rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none focus:border-blue-500 dark:border-neutral-400"
       />
     </div>
 

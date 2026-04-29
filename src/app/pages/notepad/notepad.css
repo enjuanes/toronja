@@ -1,0 +1,14 @@
+.tabs-notepad {
+  scrollbar-width: thin;
+  overflow-x: auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tabs-notepad {
+    overflow-x: hidden;
+  }
+
+  .tabs-notepad:hover {
+    overflow-x: auto;
+  }
+}

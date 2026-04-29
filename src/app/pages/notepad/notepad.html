@@ -1,9 +1,9 @@
 <app-sidebar [(open)]="sidebarOpen" />
 <div class="flex h-dvh flex-col">
   <header
-    class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:border-neutral-400 dark:bg-neutral-900"
+    class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 dark:border-neutral-400 dark:bg-neutral-900"
   >
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 p-3 dark:border-neutral-400">
       <button
         type="button"
         (click)="sidebarOpen.set(true)"
@@ -12,24 +12,199 @@
       >
         <span class="material-symbols-rounded" aria-hidden="true">menu</span>
       </button>
-      <h1 class="text-xl font-semibold">Notepad</h1>
+      <h1
+        [class.hidden]="areMultipleTabs()"
+        [class.md:block]="areMultipleTabs()"
+        class="text-xl font-semibold"
+      >
+        Notepad
+      </h1>
     </div>
 
-    <div class="flex items-center gap-3">
+    @if (areMultipleTabs()) {
+      <div
+        appHorizontalWheelScroll
+        class="tabs-notepad flex h-full flex-1 items-end gap-1 bg-neutral-50 px-2 dark:bg-neutral-900"
+      >
+        @for (item of tabs(); track item.id) {
+          @let isActive = activeTabId() === item.id;
+          <button
+            (click)="switchTab(item.id!)"
+            class="group flex shrink-0 cursor-pointer items-center justify-between gap-1 rounded-tl-md rounded-tr-md border-x-2 border-t-2 border-neutral-900 py-1 ps-2 pe-1 transition-all dark:border-neutral-400"
+            [class]="
+              isActive
+                ? 'bg-toronja-200 dark:bg-toronja-900 border-neutral-900 font-medium'
+                : 'pb-4 hover:bg-neutral-50 hover:pb-3 hover:font-medium hover:dark:bg-neutral-900'
+            "
+          >
+            <span>
+              {{ item.name }}
+            </span>
+
+            <button
+              (click)="closeTab(item.id!, $event)"
+              class="flex cursor-pointer hover:text-red-500"
+              [class]="
+                isActive
+                  ? 'text-neutral-600 dark:text-neutral-300'
+                  : 'text-neutral-300 group-hover:text-neutral-600 dark:text-neutral-600 group-hover:dark:text-neutral-300'
+              "
+            >
+              <span class="material-symbols-rounded text-xl leading-none" aria-hidden="true"
+                >close</span
+              >
+            </button>
+          </button>
+        }
+      </div>
+    }
+
+    <div class="flex items-center gap-3 p-3">
+      @if (areMultipleTabs()) {
+        <button
+          type="button"
+          (click)="openEditDialog()"
+          title="Edit tab name"
+          aria-label="Edit tab name"
+          class="neo-button flex rounded-md bg-blue-500 p-1 text-white"
+        >
+          <span class="material-symbols-rounded" aria-hidden="true">edit</span>
+        </button>
+      }
       <button
         type="button"
-        (click)="wrapEnabled.update((wrap) => !wrap)"
+        (click)="addTab()"
+        aria-label="Add new tab"
+        title="Add new tab"
+        class="neo-button flex rounded-md bg-green-500 p-1 text-white"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">add</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="wrapDisabled.update((wrap) => !wrap)"
         title="Toggle line wrap"
         aria-label="Toggle line wrap"
         class="neo-button flex rounded-md p-1"
-        [class]="wrapEnabled() ? 'bg-toronja-500 text-white' : ''"
+        [class]="wrapDisabled() ? '' : 'bg-toronja-500 text-white'"
       >
         <span class="material-symbols-rounded" aria-hidden="true">wrap_text</span>
       </button>
     </div>
   </header>
-  <main class="flex min-h-0 flex-1 flex-col">
-    <!-- <p class="bg-amber-300">tabs</p> -->
+  <main class="relative flex min-h-0 flex-1 flex-col">
     <div #codeMirrorWrapper class="min-h-0 flex-1"></div>
+
+    @if (searchOpen()) {
+      <div
+        role="search"
+        aria-label="Find in document"
+        class="absolute top-4 right-4 z-20 flex items-center gap-1 rounded-lg border-2 border-neutral-900 bg-neutral-50 px-2 py-1.5 shadow-[2px_2px_0_0_#171717] dark:border-neutral-400 dark:bg-neutral-900 dark:shadow-[2px_2px_0_0_#9ca3af]"
+      >
+        <input
+          #searchInputRef
+          type="text"
+          autocorrect="off"
+          autocomplete="off"
+          spellcheck="false"
+          [value]="searchQuery()"
+          (input)="onSearchInput($event)"
+          (keydown.enter)="searchFindNext()"
+          (keydown.shift.enter)="$event.preventDefault(); searchFindPrev()"
+          (keydown.escape)="closeSearch()"
+          placeholder="Find..."
+          aria-label="Search"
+          autocomplete="off"
+          class="w-36 bg-transparent text-sm outline-none"
+        />
+        <span
+          class="min-w-10 text-center text-xs text-neutral-500 dark:text-neutral-400"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          @if (searchQuery()) {
+            {{ searchTotalMatches() > 0 ? searchCurrentIndex() : 0 }}/{{ searchTotalMatches() }}
+          }
+        </span>
+        <div class="mx-0.5 h-4 w-px bg-neutral-300 dark:bg-neutral-600" aria-hidden="true"></div>
+        <button
+          type="button"
+          (click)="searchFindPrev()"
+          title="Previous match (Shift+Enter)"
+          aria-label="Previous match"
+          class="neo-button flex rounded p-0.5"
+        >
+          <span class="material-symbols-rounded text-lg leading-none" aria-hidden="true"
+            >keyboard_arrow_up</span
+          >
+        </button>
+        <button
+          type="button"
+          (click)="searchFindNext()"
+          title="Next match (Enter)"
+          aria-label="Next match"
+          class="neo-button flex rounded p-0.5"
+        >
+          <span class="material-symbols-rounded text-lg leading-none" aria-hidden="true"
+            >keyboard_arrow_down</span
+          >
+        </button>
+        <button
+          type="button"
+          (click)="closeSearch()"
+          aria-label="Close search"
+          class="neo-button flex rounded p-0.5"
+        >
+          <span class="material-symbols-rounded text-lg leading-none" aria-hidden="true"
+            >close</span
+          >
+        </button>
+      </div>
+    }
   </main>
 </div>
+
+<dialog
+  #editDialog
+  class="static-neo-card m-auto w-full max-w-sm rounded-2xl bg-neutral-50 p-0 backdrop:bg-black/40 dark:bg-neutral-900"
+>
+  <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()" class="flex flex-col gap-4 p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold">Edit Tab Name</h2>
+      <button
+        type="button"
+        (click)="closeEditDialog()"
+        aria-label="Close"
+        class="flex cursor-pointer p-1 transition hover:text-red-500"
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">close</span>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="tab-name" class="font-medium">Name</label>
+      <input
+        autofocus
+        autocorrect="off"
+        autocomplete="off"
+        spellcheck="false"
+        id="tab-name"
+        formControlName="name"
+        placeholder="Tab 1"
+        [maxlength]="50"
+        class="rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none focus:border-blue-500 dark:border-neutral-400"
+      />
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="editForm.invalid"
+      class="neo-button mt-2 flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-2 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">save</span>
+      Save
+    </button>
+  </form>
+</dialog>
+

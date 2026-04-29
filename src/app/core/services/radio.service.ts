@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { DatabaseService } from './database.service';
 
 export interface RadioStation {
   id?: number;
@@ -7,9 +8,7 @@ export interface RadioStation {
   url: string;
 }
 
-const DB_NAME = 'toronja';
 const STORE_NAME = 'radios';
-const DB_VERSION = 1;
 
 // Radios obtained from https://github.com/LaQuay/TDTChannels/blob/master/RADIO.md and https://fallout.fm/, thank you!
 
@@ -98,30 +97,10 @@ const DEFAULT_RADIOS: RadioStation[] = [
 
 @Injectable({ providedIn: 'root' })
 export class RadioService {
-  private dbPromise: Promise<IDBDatabase> | null = null;
-
-  private openDb(): Promise<IDBDatabase> {
-    if (this.dbPromise) return this.dbPromise;
-
-    this.dbPromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-        }
-      };
-
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-
-    return this.dbPromise;
-  }
+  private readonly db = inject(DatabaseService);
 
   async getAll(): Promise<RadioStation[]> {
-    const db = await this.openDb();
+    const db = await this.db.openDb();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readonly');
       const store = tx.objectStore(STORE_NAME);
@@ -132,7 +111,7 @@ export class RadioService {
   }
 
   async add(station: RadioStation): Promise<RadioStation> {
-    const db = await this.openDb();
+    const db = await this.db.openDb();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
@@ -143,7 +122,7 @@ export class RadioService {
   }
 
   async delete(id: number): Promise<void> {
-    const db = await this.openDb();
+    const db = await this.db.openDb();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
@@ -167,7 +146,7 @@ export class RadioService {
   }
 
   async resetRadios(): Promise<void> {
-    const db = await this.openDb();
+    const db = await this.db.openDb();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);

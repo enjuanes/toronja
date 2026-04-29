@@ -1,0 +1,41 @@
+:root {
+  --cm-cursor-color: var(--color-neutral-700);
+  --cm-selection-bg: color-mix(in srgb, var(--color-neutral-900) 15%, transparent);
+  --cm-selection-focused-bg: color-mix(in srgb, var(--color-blue-400) 25%, transparent);
+}
+
+html.dark {
+  --cm-cursor-color: var(--color-neutral-100);
+  --cm-selection-bg: color-mix(in srgb, var(--color-neutral-100) 10%, transparent);
+  --cm-selection-focused-bg: color-mix(in srgb, var(--color-blue-300) 30%, transparent);
+}
+
+.cm-editor {
+  height: 100%;
+  font-size: var(--text-base);
+}
+
+.cm-scroller {
+  overflow: auto;
+}
+
+.cm-content {
+  font-family: var(--font-mono);
+}
+
+.cm-cursor,
+.cm-dropCursor {
+  border-left-color: var(--cm-cursor-color) !important;
+}
+
+.cm-selectionBackground {
+  background-color: var(--cm-selection-bg) !important;
+}
+
+.cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+  background-color: var(--cm-selection-focused-bg) !important;
+}
+
+.cm-editor .cm-content ::selection {
+  background-color: var(--cm-selection-focused-bg);
+}

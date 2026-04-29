@@ -73,6 +73,7 @@
       </button>
     </div>
     <input
+      autofocus
       type="color"
       formControlName="picker"
       class="h-32 w-32 cursor-pointer"
@@ -81,9 +82,12 @@
 
     <input
       type="text"
+      autocorrect="off"
+      autocomplete="off"
+      spellcheck="false"
       formControlName="hex"
       maxlength="7"
-      class="focus:border-toronja-500 rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none dark:border-neutral-400"
+      class="rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none focus:border-blue-500 dark:border-neutral-400"
       aria-label="Hex color code"
     />
   </form>

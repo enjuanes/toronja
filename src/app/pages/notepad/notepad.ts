@@ -269,18 +269,20 @@ export class Notepad implements OnInit {
 
   protected async closeTab(id: number, event: MouseEvent): Promise<void> {
     event.stopPropagation();
-    if (await this.confirmDialogService.confirm('Are you sure you want to delete this tab?')) {
-      await this.notepadService.delete(id);
-      const remaining = this.tabs().filter((t) => t.id !== id);
-      this.tabs.set(remaining);
+    const tab = this.tabs().find((t) => t.id === id);
+    const hasContent = !!tab?.content.trim();
+    if (hasContent && !await this.confirmDialogService.confirm('Are you sure you want to delete this tab?')) return;
 
-      if (this.activeTabId() === id) {
-        const next = remaining[0];
-        if (next?.id !== undefined) {
-          this.switchTab(next.id);
-        } else {
-          this.activeTabId.set(null);
-        }
+    await this.notepadService.delete(id);
+    const remaining = this.tabs().filter((t) => t.id !== id);
+    this.tabs.set(remaining);
+
+    if (this.activeTabId() === id) {
+      const next = remaining[0];
+      if (next?.id !== undefined) {
+        this.switchTab(next.id);
+      } else {
+        this.activeTabId.set(null);
       }
     }
   }

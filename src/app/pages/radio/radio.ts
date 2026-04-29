@@ -17,6 +17,7 @@ import { Sidebar } from '../../core/components/sidebar/sidebar';
 import { RADIO_VOLUME_KEY } from '../../core/constants/core.constants';
 import { EmojiArtworkService } from '../../core/services/emoji-artwork.service';
 import { FaviconService } from '../../core/services/favicon.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { RadioService, RadioStation } from '../../core/services/radio.service';
 
 @Component({
@@ -28,6 +29,7 @@ import { RadioService, RadioStation } from '../../core/services/radio.service';
 })
 export class Radio implements OnInit {
   private readonly radioService = inject(RadioService);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly titleService = inject(Title);
@@ -153,7 +155,7 @@ export class Radio implements OnInit {
   }
 
   protected async resetStations(): Promise<void> {
-    if (confirm('Are you sure you want to reset all stations to default? This cannot be undone.')) {
+    if (await this.confirmDialogService.confirm('Are you sure you want to reset all stations to default? This cannot be undone.')) {
       this.stopPlayback();
       this.lastPlayingId.set(null);
       await this.radioService.resetRadios();

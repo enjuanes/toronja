@@ -14,7 +14,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { lintKeymap } from '@codemirror/lint';
-import { findNext, findPrevious, search, SearchQuery, selectNextOccurrence, setSearchQuery } from '@codemirror/search';
+import {
+  findNext,
+  findPrevious,
+  search,
+  SearchQuery,
+  selectNextOccurrence,
+  setSearchQuery,
+} from '@codemirror/search';
 import { Compartment, EditorState } from '@codemirror/state';
 import { drawSelection, EditorView, keymap } from '@codemirror/view';
 import { Sidebar } from '../../core/components/sidebar/sidebar';
@@ -23,6 +30,7 @@ import {
   NOTEPAD_DISABLE_WRAP_KEY,
 } from '../../core/constants/core.constants';
 import { HorizontalWheelScrollDirective } from '../../core/directives/horizontal-wheel-scroll';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { NotepadService, NotepadTab } from '../../core/services/notepad.service';
 
 @Component({
@@ -34,6 +42,7 @@ import { NotepadService, NotepadTab } from '../../core/services/notepad.service'
 })
 export class Notepad implements OnInit {
   private readonly notepadService = inject(NotepadService);
+  private readonly confirmDialogService = inject(ConfirmDialogService);
   private readonly fb = inject(FormBuilder);
   private readonly codeMirrorWrapper = viewChild<ElementRef<HTMLDivElement>>('codeMirrorWrapper');
   private readonly editDialog = viewChild<ElementRef<HTMLDialogElement>>('editDialog');
@@ -99,7 +108,14 @@ export class Notepad implements OnInit {
       syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
       search(),
       keymap.of([
-        { key: 'Mod-f', run: () => { this.openSearch(); return true; }, preventDefault: true },
+        {
+          key: 'Mod-f',
+          run: () => {
+            this.openSearch();
+            return true;
+          },
+          preventDefault: true,
+        },
         { key: 'Mod-d', run: selectNextOccurrence, preventDefault: true },
         ...defaultKeymap,
         ...historyKeymap,
@@ -222,7 +238,9 @@ export class Notepad implements OnInit {
     const state = this.editorView.state;
     const sel = state.selection.main;
     const cursor = q.getCursor(state.doc);
-    let total = 0, current = 0, result;
+    let total = 0,
+      current = 0,
+      result;
     while (!(result = cursor.next()).done) {
       total++;
       if (result.value.from === sel.from && result.value.to === sel.to) current = total;
@@ -251,18 +269,18 @@ export class Notepad implements OnInit {
 
   protected async closeTab(id: number, event: MouseEvent): Promise<void> {
     event.stopPropagation();
-    if (!confirm('Are you sure you want to delete this tab?')) return;
+    if (await this.confirmDialogService.confirm('Are you sure you want to delete this tab?')) {
+      await this.notepadService.delete(id);
+      const remaining = this.tabs().filter((t) => t.id !== id);
+      this.tabs.set(remaining);
 
-    await this.notepadService.delete(id);
-    const remaining = this.tabs().filter((t) => t.id !== id);
-    this.tabs.set(remaining);
-
-    if (this.activeTabId() === id) {
-      const next = remaining[0];
-      if (next?.id !== undefined) {
-        this.switchTab(next.id);
-      } else {
-        this.activeTabId.set(null);
+      if (this.activeTabId() === id) {
+        const next = remaining[0];
+        if (next?.id !== undefined) {
+          this.switchTab(next.id);
+        } else {
+          this.activeTabId.set(null);
+        }
       }
     }
   }
@@ -289,4 +307,3 @@ export class Notepad implements OnInit {
     this.closeEditDialog();
   }
 }
-

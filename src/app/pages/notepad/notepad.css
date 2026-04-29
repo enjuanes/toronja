@@ -12,3 +12,17 @@
     overflow-x: auto;
   }
 }
+.asdasd {
+  /* max-width: calc(var(--spacing) * 20); */
+  background-color: var(--color-neutral-50) /* oklch(98.5% 0 0) = #fafafa */;
+  text-wrap: nowrap;
+  overflow: hidden;
+  border-style: var(--tw-border-style);
+  padding-block: calc(var(--spacing) * 1) /* 0.25rem = 4px */;
+  padding-inline-start: calc(var(--spacing) * 2) /* 0.5rem = 8px */;
+  border-top-left-radius: var(--radius-md) /* 0.375rem = 6px */;
+  border-top-right-radius: var(--radius-md) /* 0.375rem = 6px */;
+
+  border-width: 2px;
+  border-bottom: none;
+}

@@ -24,6 +24,7 @@ import {
 } from '@codemirror/search';
 import { Compartment, EditorState } from '@codemirror/state';
 import { drawSelection, EditorView, keymap } from '@codemirror/view';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Sidebar } from '../../core/components/sidebar/sidebar';
 import {
   NOTEPAD_ACTIVE_TAB_KEY,
@@ -35,7 +36,7 @@ import { NotepadService, NotepadTab } from '../../core/services/notepad.service'
 
 @Component({
   selector: 'app-notepad',
-  imports: [Sidebar, ReactiveFormsModule, HorizontalWheelScrollDirective],
+  imports: [Sidebar, ReactiveFormsModule, HorizontalWheelScrollDirective, DragDropModule],
   templateUrl: './notepad.html',
   styleUrl: './notepad.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -254,6 +255,15 @@ export class Notepad implements OnInit {
     const updated = { ...tab, content };
     this.tabs.update((tabs) => tabs.map((t) => (t.id === tab.id ? updated : t)));
     this.notepadService.update(updated);
+  }
+
+  protected async dropTab(event: CdkDragDrop<NotepadTab[]>): Promise<void> {
+    if (event.previousIndex === event.currentIndex) return;
+    const reordered = [...this.tabs()];
+    moveItemInArray(reordered, event.previousIndex, event.currentIndex);
+    reordered.forEach((tab, i) => (tab.order = i));
+    this.tabs.set(reordered);
+    await Promise.all(reordered.map((tab) => this.notepadService.update(tab)));
   }
 
   protected async addTab(): Promise<void> {

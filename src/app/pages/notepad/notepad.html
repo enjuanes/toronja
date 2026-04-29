@@ -24,11 +24,17 @@
     @if (areMultipleTabs()) {
       <div
         appHorizontalWheelScroll
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        (cdkDropListDropped)="dropTab($event)"
         class="tabs-notepad flex h-full flex-1 items-end gap-1 bg-neutral-50 px-2 dark:bg-neutral-900"
       >
         @for (item of tabs(); track item.id) {
           @let isActive = activeTabId() === item.id;
           <button
+            cdkDrag
+            cdkDragLockAxis="x"
+            [cdkDragData]="item"
             (click)="switchTab(item.id!)"
             class="group flex shrink-0 cursor-pointer items-center justify-between gap-1 rounded-tl-md rounded-tr-md border-x-2 border-t-2 border-neutral-900 py-1 ps-2 pe-1 transition-all dark:border-neutral-400"
             [class]="
@@ -37,6 +43,17 @@
                 : 'pb-4 hover:bg-neutral-50 hover:pb-3 hover:font-medium hover:dark:bg-neutral-900'
             "
           >
+            <ng-template cdkDragPreview [matchSize]="true">
+              <div class="asdasd overflow-hidden border-2 bg-neutral-50 text-nowrap">
+                {{ item.name }}
+              </div>
+            </ng-template>
+
+            <ng-template cdkDragPlaceholder>
+              <div
+                class="h-8 w-20 rounded-tl-md rounded-tr-md border-x-2 border-t-2 border-dashed border-neutral-400 dark:border-neutral-600"
+              ></div>
+            </ng-template>
             <span>
               {{ item.name }}
             </span>
@@ -207,4 +224,3 @@
     </button>
   </form>
 </dialog>
-

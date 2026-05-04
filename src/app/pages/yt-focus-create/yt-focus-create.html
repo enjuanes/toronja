@@ -1,0 +1,64 @@
+<app-sidebar [(open)]="sidebarOpen" />
+
+<header
+  class="sticky top-0 z-10 flex items-center justify-between border-b-2 bg-neutral-50 px-4 py-3 dark:border-neutral-400 dark:bg-neutral-900"
+>
+  <div class="flex items-center gap-3">
+    <button
+      type="button"
+      (click)="sidebarOpen.set(true)"
+      aria-label="Open menu"
+      class="neo-button flex rounded-md p-1"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">menu</span>
+    </button>
+    <h1 class="text-xl font-semibold">YT Focus</h1>
+  </div>
+</header>
+
+<main class="flex flex-col items-center justify-center gap-6 px-4 pt-32">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="static-neo-card flex w-full max-w-sm flex-col gap-5 rounded-2xl bg-neutral-50 p-6 dark:bg-neutral-900"
+  >
+    <h2 class="text-lg font-semibold">Create YT Focus</h2>
+
+    <div class="flex flex-col gap-1">
+      <label for="yt-focus-url" class="font-medium">YouTube URL *</label>
+      <input
+        id="yt-focus-url"
+        autocorrect="off"
+        autocomplete="off"
+        spellcheck="false"
+        type="text"
+        formControlName="url"
+        placeholder="https://www.youtube.com/watch?v=..."
+        (input)="invalidUrl.set(false)"
+        class="rounded-lg border-2 bg-transparent px-3 py-2 transition outline-none focus:border-blue-500 dark:border-neutral-400"
+      />
+      @if (invalidUrl()) {
+        <p class="text-sm text-red-500 dark:text-red-400">Invalid YouTube URL</p>
+      }
+    </div>
+
+    <label for="yt-focus-controls" class="flex cursor-pointer items-center gap-2">
+      <input
+        id="yt-focus-controls"
+        type="checkbox"
+        formControlName="showControls"
+        class="h-4 w-4 cursor-pointer accent-toronja-500"
+      />
+      <span class="font-medium">Show controls</span>
+    </label>
+
+    <button
+      type="submit"
+      [disabled]="form.invalid"
+      class="neo-button bg-toronja-500 mt-2 flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <span class="material-symbols-rounded" aria-hidden="true">play_arrow</span>
+      Start
+    </button>
+  </form>
+</main>

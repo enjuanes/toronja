@@ -60,6 +60,17 @@ export const routes: Routes = [
     title: 'Notepad',
   },
   {
+    path: 'yt-focus',
+    loadComponent: () =>
+      import('./pages/yt-focus-create/yt-focus-create').then((m) => m.YtFocusCreate),
+    title: 'YT Focus',
+  },
+  {
+    path: 'yt-focus/:videoId',
+    loadComponent: () => import('./pages/yt-focus/yt-focus').then((m) => m.YtFocus),
+    title: 'YT Focus',
+  },
+  {
     path: 'psicotecnico',
     loadComponent: () => import('./pages/psicotecnico/psicotecnico').then((m) => m.Psicotecnico),
     title: 'Psicotécnico',

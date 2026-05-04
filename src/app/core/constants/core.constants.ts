@@ -42,6 +42,13 @@ export const PAGES = [
     cardBackground: 'bg-toronja-500/40',
   },
   {
+    title: 'YT Focus',
+    description: 'Watch a YouTube video distraction-free',
+    icon: 'smart_display',
+    code: 'yt-focus',
+    cardBackground: 'bg-red-500/40',
+  },
+  {
     title: 'Psicotécnico',
     description: 'Test de coordinación visomotora',
     icon: 'sports_score',
@@ -58,3 +65,5 @@ export const RADIO_VOLUME_KEY = 'RADIO_VOLUME';
 export const NOTEPAD_CONTENT_KEY = 'NOTEPAD_CONTENT';
 export const NOTEPAD_DISABLE_WRAP_KEY = 'NOTEPAD_DISABLE_WRAP';
 export const NOTEPAD_ACTIVE_TAB_KEY = 'NOTEPAD_ACTIVE_TAB';
+
+export const YT_FOCUS_SHOW_CONTROLS_KEY = 'YT_FOCUS_SHOW_CONTROLS';
